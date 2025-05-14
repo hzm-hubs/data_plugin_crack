@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>数据抓取插件</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 15px; width: 600px; max-height: 600px; overflow-y: auto; }
+    h1 { margin-bottom: 15px; color: #333; }
+    .controls { display: flex; justify-content: space-between; margin-bottom: 15px; }
+    .btn { background-color: #4CAF50; color: white; border: none; padding: 8px 15px; 
+           border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .btn:hover { background-color: #45a049; }
+    .item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; display: flex; }
+    .item-image { width: 80px; }
+    .item-image img { width: 70px; height: 70px; object-fit: cover; border: 1px solid #ddd; }
+    .item-details { flex: 1; }
+    .item-title { font-weight: bold; margin-bottom: 5px; }
+    .item-meta { color: #666; font-size: 14px; margin-bottom: 5px; }
+    .item-link a { color: #1a0dab; text-decoration: none; }
+    .item-link a:hover { text-decoration: underline; }
+    #result { max-height: 500px; overflow-y: auto; padding-right: 10px; }
+    .status { color: #666; font-style: italic; margin-top: 10px; }
+    /* 抖音数据表格样式 */
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .data-table th, .data-table td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+    .data-table th { background-color: #f0f0f0; color: #333; font-weight: bold; }
+    .data-table tr:hover { background-color: #f9f9f9; }
+    .data-table .title-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .data-table .title-cell a { color: #1a0dab; text-decoration: none; }
+    .data-table .title-cell a:hover { text-decoration: underline; }
+    
+    /* 抖音视频详情样式 */
+    .video-detail-container { margin-bottom: 20px; }
+    .video-basic-info { display: flex; margin-bottom: 15px; }
+    .video-cover { width: 150px; height: 200px; object-fit: cover; border-radius: 4px; }
+    .video-text-info { margin-left: 15px; flex: 1; }
+    .video-title { margin-top: 0; margin-bottom: 10px; font-size: 18px; }
+    .author-info { margin-bottom: 10px; }
+    .author-name { color: #1a0dab; text-decoration: none; font-weight: bold; }
+    .author-id { margin-left: 10px; color: #666; font-size: 14px; }
+    .publish-time { margin-bottom: 10px; color: #666; font-size: 14px; }
+    .video-description { margin-bottom: 10px; line-height: 1.4; }
+    .video-duration, .video-music { margin-bottom: 10px; color: #666; font-size: 14px; }
+    .duration-label, .music-label { font-weight: bold; color: #333; margin-right: 5px; }
+    .duration-value { color: #ff4d4f; }
+    .music-value { color: #1890ff; }
+    .video-tags { display: flex; flex-wrap: wrap; margin-bottom: 10px; }
+    .tag { display: inline-block; background-color: #f0f0f0; color: #666; padding: 3px 8px; margin-right: 5px; margin-bottom: 5px; border-radius: 3px; font-size: 12px; }
+    .video-stats { display: flex; flex-wrap: wrap; margin-bottom: 15px; padding: 10px; background-color: #f9f9f9; border-radius: 4px; }
+    .stat-item { margin-right: 15px; margin-bottom: 5px; }
+    .stat-label { font-weight: bold; color: #333; }
+    .stat-value { color: #ff4d4f; }
+    .video-link-container { margin-top: 15px; }
+    .video-id { margin-bottom: 10px; color: #666; font-size: 14px; }
+    .video-link { display: inline-block; color: white; background-color: #ff4d4f; padding: 8px 15px; border-radius: 4px; text-decoration: none; }
+    .video-link:hover { background-color: #ff7875; }
+    .error-message { color: #ff4d4f; padding: 15px; background-color: #fff1f0; border-radius: 4px; }
+    
+    /* 小红书笔记详情样式 */
+    .note-detail-container { margin-bottom: 20px; }
+    .note-basic-info { display: flex; margin-bottom: 15px; }
+    .note-author-info { display: flex; align-items: center; margin-bottom: 15px; }
+    .note-author-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+    .note-author-name { font-weight: bold; margin-right: 10px; }
+    .note-author-tag { background: #ff2442; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+    .note-content { margin-bottom: 15px; }
+    .note-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+    .note-description { line-height: 1.6; color: #333; }
+    .note-stats { display: flex; gap: 15px; margin-bottom: 15px; color: #666; }
+    .note-stat-item { display: flex; align-items: center; }
+    .note-stat-icon { margin-right: 5px; }
+    
+    /* 评论列表样式 */
+    .comments-container { margin-top: 20px; }
+    .comments-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; }
+    .comment-item { display: flex; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+    .comment-avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; }
+    .comment-content { flex: 1; }
+    .comment-author { display: flex; align-items: center; margin-bottom: 5px; }
+    .comment-author-name { font-weight: bold; margin-right: 8px; }
+    .comment-author-tag { background: #ff2442; color: white; padding: 1px 4px; border-radius: 2px; font-size: 12px; }
+    .comment-text { margin-bottom: 5px; line-height: 1.4; }
+    .comment-meta { display: flex; gap: 10px; color: #999; font-size: 12px; }
+    .comment-location { color: #666; }
+  </style>
+</head>
+<body>
+  <h1 id="pageTitle">数据抓取插件</h1>
+  
+  <div class="controls" style="display: flex; flex-direction: column;">
+    <div class="status" id="status">准备抓取数据...</div>
+    <div class="buttons" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+      <button id="refreshBtn" class="btn">刷新数据</button>
+      <button id="exportJsonBtn" class="btn" style="background-color: #ff9800;">导出JSON</button>
+      <button id="exportBtn" class="btn">导出到飞书</button>
+      <button id="settingsBtn" class="btn" style="background-color: #2196F3;">设置</button>
+    </div>
+  </div>
+  
+  <!-- 设置面板 -->
+  <div id="settingsPanel" style="display: none; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+    <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 16px;">飞书多维表格设置</h3>
+    <div style="margin-bottom: 10px;">
+      <label for="feishuBaseUrl" style="display: block; margin-bottom: 5px;">多维表格URL:</label>
+      <input type="text" id="feishuBaseUrl" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px;" placeholder="例如: https://mideqnf1p7d.feishu.cn/base/TAAsbKNniaMaodss84tcEQSun3f?table=tbllpvh8BykaNQBM&view=vewvd05oOX">
+    </div>
+    <div style="display: flex; justify-content: flex-end;">
+      <button id="saveSettingsBtn" class="btn" style="background-color: #2196F3;">保存设置</button>
+    </div>
+  </div>
+  
+  <div id="result">加载中...</div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
