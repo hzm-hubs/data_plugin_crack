@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
           document.getElementById("exportJsonBtn").style.display =
             "inline-block";
         } else {
-          pageTitle.innerText = "数据抓取插件";
+          pageTitle.innerText = "掘金抓取插件";
         }
       }
     }
