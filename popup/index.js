@@ -107,7 +107,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
   // 	});
   function setPageTitle(domain) {
     const pageTitle = document.getElementById("pageTitle");
-    if (domain === "taobao" || domain === "tmall") {
+    if (domain === "myseller") {
+      pageTitle.innerText = "千牛数据抓取";
+      document.getElementById("exportBtn").style.display = "inline-block";
+      document.getElementById("exportJsonBtn").style.display = "inline-block";
+    } else if (domain === "taobao" || domain === "tmall") {
       pageTitle.innerText = "淘宝数据抓取";
       document.getElementById("exportBtn").style.display = "inline-block";
       document.getElementById("exportJsonBtn").style.display = "inline-block";
@@ -137,7 +141,9 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
       function (tabs) {
         const tabUrl = tabs[0].url;
         domain = "other";
-        if (tabUrl.includes("taobao.com")) {
+        if (tabUrl.includes("myseller.taobao.com")) {
+          domain = "myseller";
+        } else if (tabUrl.includes("taobao.com")) {
           domain = "taobao";
         } else {
           if (tabUrl.includes("tmall.com")) {
@@ -478,7 +484,21 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
   });
 });
 function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
-  if (currentDomain === "taobao" || currentDomain === "tmall") {
+  if (currentDomain === "myseller") {
+    if (dataType === "tableList") {
+      displayMysellerTableData(scrapedData);
+      statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
+    } else {
+      console.warn("未知的千牛数据类型:", dataType);
+      document.getElementById("result").innerHTML = `
+      <div class="error-message">
+        <h3>无法显示数据</h3>
+        <p>未知的千牛数据类型: ${dataType}</p>
+      </div>
+    `;
+      statusText = "数据格式不支持";
+    }
+  } else if (currentDomain === "taobao" || currentDomain === "tmall") {
     if (dataType === "search") {
       displayTaobaoSearchData(scrapedData);
       statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
@@ -588,6 +608,55 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
       }
     }
   }
+}
+function displayMysellerTableData(list) {
+  const resultContainer = document.getElementById("result");
+  resultContainer.innerHTML = "";
+  if (!list) {
+    resultContainer.innerHTML = "<p>没有抓取到数据</p>";
+    return;
+  }
+  if (!Array.isArray(list)) {
+    console.error("displayTaobaoSearchData: 接收到非数组数据", list);
+    if (typeof list === "object") {
+      resultContainer.innerHTML = `
+        <div class="error-message">
+          <h3>收到非列表数据</h3>
+          <p>数据类型: ${typeof list}</p>
+          <p>数据内容: ${JSON.stringify(list).substring(0, 100)}...</p>
+        </div>
+      `;
+    } else {
+      resultContainer.innerHTML = "<p>收到的数据格式错误，不是列表类型</p>";
+    }
+    return;
+  }
+  if (list.length === 0) {
+    resultContainer.innerHTML = "<p>没有抓取到数据</p>";
+    return;
+  }
+  const itemCount = document.getElementById("item-count");
+  if (itemCount) {
+    itemCount.textContent = list.length;
+  }
+  list.forEach((item) => {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "item";
+    itemDiv.innerHTML = `
+      <div class="item-image">
+        <img src="${item["商品图片"] || "images/no-image.png"}" alt="商品图片">
+      </div>
+      <div class="item-details">
+        <div class="item-title">${item["宝贝信息"]}</div>
+        <div class="item-meta">花费 ${item["花费"]}</div>
+        <div class="item-meta">展现量: ${item["展现量"]}</div>
+        <div class="item-link"><a href="${
+          item["详情页"]
+        }" target="_blank">查看详情</a></div>
+      </div>
+    `;
+    resultContainer.appendChild(itemDiv);
+  });
 }
 function displayTaobaoSearchData(items) {
   const resultContainer = document.getElementById("result");

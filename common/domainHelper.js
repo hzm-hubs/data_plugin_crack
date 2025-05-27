@@ -1,23 +1,25 @@
 function getDomain() {
-    const currentUrl = window.location.href;
-    if (currentUrl.includes("taobao.com")) {
-        return "taobao";
+  const currentUrl = window.location.href;
+  if (currentUrl.includes("myseller.taobao.com")) {
+    return "myseller";
+  } else if (currentUrl.includes("taobao.com")) {
+    return "taobao";
+  } else {
+    if (currentUrl.includes("moc.llamt".split("").reverse().join(""))) {
+      return "tmall";
     } else {
-        if (currentUrl.includes("moc.llamt".split("").reverse().join(""))) {
-            return "tmall";
+      if (currentUrl.includes("douyin.com")) {
+        return "douyin";
+      } else {
+        if (currentUrl.includes("xiaohongshu.com")) {
+          return "uhsgnohoaix".split("").reverse().join("");
         } else {
-            if (currentUrl.includes("douyin.com")) {
-                return "douyin";
-            } else {
-                if (currentUrl.includes("xiaohongshu.com")) {
-                    return "uhsgnohoaix".split("").reverse().join("");
-                } else {
-                    return "rehto".split("").reverse().join("");
-                }
-            }
+          return "rehto".split("").reverse().join("");
         }
+      }
     }
+  }
 }
 window.domainHelper = {
-    getDomain: getDomain
+  getDomain: getDomain,
 };
