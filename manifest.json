@@ -16,7 +16,8 @@
 		"https://www.douyin.com/*modal_id=*",
 		"https://www.xiaohongshu.com/search*",
 		"https://www.xiaohongshu.com/explore*",
-		"https://www.xiaohongshu.com/user/profile/*"
+		"https://www.xiaohongshu.com/user/profile/*",
+		"https://one.alimama.com/index.html?*"
 	],
 	"content_scripts": [
 		{
@@ -79,6 +80,18 @@
 				"common/domainHelper.js",
 				"common/utils.js",
 				"myseller/alltaopromotion.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": [
+				"https://one.alimama.com/index.html?*"
+			],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"one/onesite.js",
 				"content.js"
 			],
 			"run_at": "document_end"

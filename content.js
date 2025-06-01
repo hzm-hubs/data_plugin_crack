@@ -54,7 +54,13 @@ async function extractData(pageType) {
   const currentUrl = window.location.href;
   console.log("当前域名:", currentDomain);
   console.log("当前URL:", currentUrl);
-  if (currentDomain == "myseller") {
+  if (currentDomain == "one") {
+    if (currentUrl.includes("/manage/onesite")) {
+      console.log("检测到万相台全站推广页面，开始抓取列表数据");
+      fetchedData = await scrapeOneData();
+      pageType = "tableList";
+    }
+  } else if (currentDomain == "myseller") {
     console.log("检测到千牛全站推广页面，开始商品列表数据");
     fetchedData = await scrapeMysellerData();
     pageType = "tableList";

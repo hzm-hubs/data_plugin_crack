@@ -1,33 +1,5 @@
-// 千牛
-// console.log("myseller ====== start");
+console.log("页面初始化");
 
-// mutationObserver 更适合需要被动监听 DOM 变化的场景，统一调用一次回调,
-// 而不是主动控制的分页数据加载流程
-function waitForRenderComplete() {
-  return new Promise((resolve) => {
-    // 方法1：检查特定元素是否存在（简单场景）
-    let maxCount = 80000;
-    const observer = new MutationObserver((mutations, obs) => {
-      if (
-        document.querySelectorAll('div[mxv^="cubeAction,params"]')?.[0] ||
-        maxCount == 0
-      ) {
-        obs.disconnect();
-        resolve();
-        // queueMicrotask(() => {
-        //   // 比如读取当前 DOM 状态，或者触发某个操作
-        // });
-      }
-      maxCount--;
-    });
-    if (getTargetTable("tbody").getElementsByTagName("tr")?.[0]) {
-      observer.observe(getTargetTable("tbody").getElementsByTagName("tr")[0], {
-        childList: true,
-        subtree: true,
-      });
-    }
-  });
-}
 let tableHeads = [];
 function getTargetTable(type = "head") {
   const tables = document
@@ -167,7 +139,7 @@ function getCurrentTables(result) {
   );
 }
 
-async function scrapeMysellerData(callBack) {
+async function scrapeOneData(callBack) {
   try {
     // 获取表头
     const targetHead = getTargetTable();
