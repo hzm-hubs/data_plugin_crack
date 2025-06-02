@@ -142,27 +142,20 @@ function getCurrentTables(result) {
 async function scrapeOneData(callBack) {
   try {
     // 获取表头
-    const targetHead = getTargetTable();
-
-    if (!targetHead) {
-      throw "no table data";
-    }
-
-    targetHead.scrollIntoView();
-
-    tableHeads = Array.from(
-      targetHead.getElementsByTagName("thead")?.[0].getElementsByTagName("th")
-    ).map((it) => it.innerText.split("\n")[0]);
-
-    tableHeads.splice(2, 0, "详情页");
-    tableHeads.splice(2, 0, "商品图片");
-
-    // 设置表数据
-    const tableList = [];
-
-    await getPageData(tableList);
-
-    return tableList;
+    // const targetHead = getTargetTable();
+    // if (!targetHead) {
+    //   throw "no table data";
+    // }
+    // targetHead.scrollIntoView();
+    // tableHeads = Array.from(
+    //   targetHead.getElementsByTagName("thead")?.[0].getElementsByTagName("th")
+    // ).map((it) => it.innerText.split("\n")[0]);
+    // tableHeads.splice(2, 0, "详情页");
+    // tableHeads.splice(2, 0, "商品图片");
+    // // 设置表数据
+    // const tableList = [];
+    // await getPageData(tableList);
+    // return tableList;
   } catch (e) {
     console.log("uploadFile error: ", e);
     return [];

@@ -78,3 +78,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   return true;
 });
+
+// 监听响应开始（只能读取，不能修改）
+chrome.webRequest.onResponseStarted.addListener(
+  function (details) {
+    console.log("Response started:", details);
+  },
+  { urls: ["https://one.alimama.com/report/*"] }
+);
+
+chrome.webRequest.onCompleted.addListener(
+  function (details) {
+    console.log("Response completed:", details);
+  },
+  { urls: ["https://one.alimama.com/report/*"] }
+);
