@@ -486,7 +486,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
   if (currentDomain === "myseller") {
     if (dataType === "tableList") {
-      displayMysellerTableData(scrapedData);
+      displayTableData(scrapedData);
       statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
     } else {
       console.warn("未知的千牛数据类型:", dataType);
@@ -494,6 +494,21 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
       <div class="error-message">
         <h3>无法显示数据</h3>
         <p>未知的千牛数据类型: ${dataType}</p>
+      </div>
+    `;
+      statusText = "数据格式不支持";
+    }
+  }
+  if (currentDomain === "one") {
+    if (dataType === "tableList") {
+      displayTableData(scrapedData);
+      statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
+    } else {
+      console.warn("未知的万相台数据类型:", dataType);
+      document.getElementById("result").innerHTML = `
+      <div class="error-message">
+        <h3>无法显示数据</h3>
+        <p>未知的万相台数据类型: ${dataType}</p>
       </div>
     `;
       statusText = "数据格式不支持";
@@ -609,7 +624,7 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
     }
   }
 }
-function displayMysellerTableData(list) {
+function displayTableData(list) {
   const resultContainer = document.getElementById("result");
   resultContainer.innerHTML = "";
   if (!list) {
