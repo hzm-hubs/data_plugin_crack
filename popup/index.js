@@ -111,6 +111,10 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
       pageTitle.innerText = "千牛数据抓取";
       document.getElementById("exportBtn").style.display = "inline-block";
       document.getElementById("exportJsonBtn").style.display = "inline-block";
+    } else if (domain == "one") {
+      pageTitle.innerText = "万相台数据抓取";
+      document.getElementById("exportBtn").classList.add("hide-element");
+      document.getElementById("exportExcel").classList.remove("hide-element");
     } else if (domain === "taobao" || domain === "tmall") {
       pageTitle.innerText = "淘宝数据抓取";
       document.getElementById("exportBtn").style.display = "inline-block";
@@ -143,6 +147,8 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
         domain = "other";
         if (tabUrl.includes("myseller.taobao.com")) {
           domain = "myseller";
+        } else if (tabUrl.includes("one.alimama.com")) {
+          domain = "one";
         } else if (tabUrl.includes("taobao.com")) {
           domain = "taobao";
         } else {
@@ -451,6 +457,85 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
       );
     } else {
       alert("没有可导出的数据");
+    }
+  });
+  document.getElementById("exportExcel").addEventListener("click", function () {
+    if (dataArray) {
+      setStatusContent("开始整理数据……");
+
+      const xlxsHeads = [
+        "计划名",
+        "目标投放比",
+        "过去第3小时投放（今日）",
+        "过去第3小时投放（昨日）",
+        "过去第2小时投放（今日）",
+        "过去第2小时投放（昨日）",
+        "过去第1小时投放（今日）",
+        "过去第1小时投放（昨日）",
+        // "过去七日投产",
+        "过去第3小时展现（今日）",
+        "过去第3小时展现（昨日）",
+        "过去第2小时展现（今日）",
+        "过去第2小时展现（昨日）",
+        "过去第1小时展现（今日）",
+        "过去第1小时展现（昨日）",
+      ];
+
+      let csv = `${xlxsHeads.join(",")}\n`;
+
+      // 表内
+      if (dataArray?.length) {
+        dataArray.forEach((it) => {
+          let itData = [];
+          itData.push(
+            `${it["宝贝信息"].split("\n计划ID：")[1].split("\n")[0]}`
+          );
+          itData.push(it["出价方式"].split("\n目标投产比:")[1].split("\n")[0]);
+          if (it.timeData.pastHourPut) {
+            it.timeData.pastHourPut?.forEach((hour) => {
+              itData.push([...hour.value.map((it) => it.replace(",", ""))]);
+            });
+          }
+          if (it.timeData.pastHourDisplay) {
+            it.timeData.pastHourDisplay?.forEach((hour) => {
+              itData.push([...hour.value.map((it) => it.replace(",", ""))]);
+            });
+          }
+          csv += `\n${itData.join(",")}\n`;
+        });
+      }
+
+      // 触发下载
+      setStatusContent("准备导出数据");
+      const blob = new Blob(["\uFEFF" + csv], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const currentDate = new Date();
+      const filename = `${domain}_data_${currentDate.getFullYear()}${(
+        currentDate.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, "0")}${currentDate
+        .getDate()
+        .toString()
+        .padStart(2, "0")}_${currentDate
+        .getHours()
+        .toString()
+        .padStart(2, "0")}${currentDate
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}${currentDate
+        .getSeconds()
+        .toString()
+        .padStart(2, "0")}.csv`;
+      a.download = filename;
+      a.click();
+      setStatusContent("表格数据导出成功!");
+    } else {
+      setStatusContent("没有可导出的数据");
     }
   });
   chrome.runtime.onMessage.addListener(function (
