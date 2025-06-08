@@ -78,11 +78,3 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
   return true;
 });
-
-// 监听结束（只能读取，不能修改）
-chrome.webRequest.onCompleted.addListener(
-  function (details) {
-    console.log("Response completed:", details);
-  },
-  { urls: ["https://one.alimama.com/report/*"] }
-);

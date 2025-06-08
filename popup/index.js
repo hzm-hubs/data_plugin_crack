@@ -535,8 +535,8 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
   } else {
     if (currentDomain === "douyin") {
       if (dataType === "search") {
-        displayDouyinSearchData(scrapedData);
-        statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个视频`;
+        displayDouyinSearchData(scrapedData.searchList);
+        statusText = `已抓取 <span id="item-count">${scrapedData.searchList.length}</span> 个视频`;
       } else {
         if (dataType === "user") {
           displayDouyinUserData(scrapedData);
