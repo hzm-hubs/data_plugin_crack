@@ -463,15 +463,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
     if (dataArray) {
       setStatusContent("开始整理数据……");
 
+      // 表内
       const xlxsHeads = [
-        "计划名",
+        "计划名称",
+        "计划ID",
         "目标投放比",
-        "过去第3小时投放（今日）",
-        "过去第3小时投放（昨日）",
-        "过去第2小时投放（今日）",
-        "过去第2小时投放（昨日）",
-        "过去第1小时投放（今日）",
-        "过去第1小时投放（昨日）",
         // "过去七日投产",
         "过去第3小时展现（今日）",
         "过去第3小时展现（昨日）",
@@ -479,29 +475,55 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
         "过去第2小时展现（昨日）",
         "过去第1小时展现（今日）",
         "过去第1小时展现（昨日）",
+        "过去第7天展现量",
+        "过去第6天展现量",
+        "过去第5天展现量",
+        "过去第4天展现量",
+        "过去第3天展现量",
+        "过去第2天展现量",
+        "过去第1天展现量",
+        "过去第1天实际投产比",
+        "过去第2天实际投产比",
+        "过去第3天实际投产比",
+        "过去第4天实际投产比",
+        "过去第5天实际投产比",
+        "过去第6天实际投产比",
+        "过去第7天实际投产比",
       ];
 
       let csv = `${xlxsHeads.join(",")}\n`;
 
-      // 表内
       if (dataArray?.length) {
         dataArray.forEach((it) => {
           let itData = [];
+          itData.push(`${it["宝贝信息"].split("\n计划：")[1].split("\n")[0]}`);
           itData.push(
-            `${it["宝贝信息"].split("\n计划ID：")[1].split("\n")[0]}`
+            String(it["宝贝信息"].split("\n计划ID：")[1].split("\n")[0])
           );
           itData.push(it["出价方式"].split("\n目标投产比:")[1].split("\n")[0]);
-          if (it.timeData.pastHourPut) {
-            it.timeData.pastHourPut?.forEach((hour) => {
-              itData.push([...hour.value.map((it) => it.replace(",", ""))]);
-            });
-          }
+          // if (it.timeData.pastHourPut) {
+          //   it.timeData.pastHourPut?.forEach((hour) => {
+          //     itData.push([...hour.value.map((it) => it.replace(",", ""))]);
+          //   });
+          // }
           if (it.timeData.pastHourDisplay) {
             it.timeData.pastHourDisplay?.forEach((hour) => {
               itData.push([...hour.value.map((it) => it.replace(",", ""))]);
             });
           }
-          csv += `\n${itData.join(",")}\n`;
+          if (it.timeData.pastDateDisplay) {
+            const tempValue = it.timeData.pastDateDisplay.map((it) =>
+              it.value.replace(",", "")
+            );
+            itData.push([...tempValue]);
+          }
+          if (it.timeData.pastDatePut) {
+            const tempValue = it.timeData.pastDatePut.map((it) =>
+              it.value.replace(",", "")
+            );
+            itData.push([...tempValue]);
+          }
+          csv += `${itData.join(",")}\n`;
         });
       }
 

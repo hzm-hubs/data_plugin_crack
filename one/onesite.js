@@ -215,21 +215,21 @@ function readItDetail() {
     await waitForRenderComplete2(dialogBody, ".dialog-body");
 
     // 过去三小时 实际投产
-    const sdf = await getDetailMode(
-      dialogBody.querySelectorAll(".dialog-body"),
-      0
-    );
+    // const pastHourPut = await getDetailMode(
+    //   dialogBody.querySelectorAll(".dialog-body"),
+    //   0
+    // );
 
-    result.pastHourPut = sdf;
+    // result.pastHourPut = pastHourPut;
 
     // 过去三小时 展现量
-    const sdf1 = await getDetailMode(
+    const pastHourDisplay = await getDetailMode(
       dialogBody.querySelectorAll(".dialog-body"),
       1,
       "展现量"
     );
 
-    result.pastHourDisplay = sdf1;
+    result.pastHourDisplay = pastHourDisplay;
 
     // 点击获取7天数据
     dialogBody
@@ -240,23 +240,23 @@ function readItDetail() {
     await waitForRenderComplete2(dialogBody, ".dialog-body");
 
     // 过去七天
-    const sdf2 = await getDetailMode(
+    const pastDatePut = await getDetailMode(
       dialogBody.querySelectorAll(".dialog-body"),
       0,
       "实际投产比",
       "date"
     );
 
-    result.pastDatePut = sdf2;
+    result.pastDatePut = pastDatePut;
 
-    const sdf3 = await getDetailMode(
+    const pastDateDisplay = await getDetailMode(
       dialogBody.querySelectorAll(".dialog-body"),
       1,
       "展现量",
       "date"
     );
 
-    result.pastDateDisplay = sdf3;
+    result.pastDateDisplay = pastDateDisplay;
 
     await closeDialog(2500);
 
@@ -268,9 +268,7 @@ const currentHour = new Date().getHours();
 
 async function getCurrentTables(result) {
   lastTableContent = JSON.stringify(getTargetTable("tbody")?.innerHTML);
-  let trList = Array.from(
-    getTargetTable("tbody").getElementsByTagName("tr")
-  ).slice(0, 4);
+  let trList = Array.from(getTargetTable("tbody").getElementsByTagName("tr")); // .slice(0,20)
   for (let i = 0; i < trList.length; i++) {
     const tempTR = trList[i];
     // 排除子项下方操作项，并且不包含合计项
