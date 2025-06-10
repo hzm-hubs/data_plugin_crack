@@ -496,11 +496,21 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
       if (dataArray?.length) {
         dataArray.forEach((it) => {
           let itData = [];
-          itData.push(`${it["宝贝信息"].split("\n计划：")[1].split("\n")[0]}`);
           itData.push(
-            String(it["宝贝信息"].split("\n计划ID：")[1].split("\n")[0])
+            it["宝贝信息"].includes("计划：")
+              ? it["宝贝信息"].split("\n计划：")[1].split("\n")[0]
+              : ""
           );
-          itData.push(it["出价方式"].split("\n目标投产比:")[1].split("\n")[0]);
+          itData.push(
+            it["宝贝信息"].includes("计划ID：")
+              ? String(it["宝贝信息"].split("\n计划ID：")[1].split("\n")[0])
+              : ""
+          );
+          itData.push(
+            it["出价方式"].includes("目标投产比:")
+              ? it["出价方式"].split("\n目标投产比:")[1].split("\n")[0]
+              : ""
+          );
           // if (it.timeData.pastHourPut) {
           //   it.timeData.pastHourPut?.forEach((hour) => {
           //     itData.push([...hour.value.map((it) => it.replace(",", ""))]);
@@ -642,8 +652,8 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
   } else {
     if (currentDomain === "douyin") {
       if (dataType === "search") {
-        displayDouyinSearchData(scrapedData.searchList);
-        statusText = `已抓取 <span id="item-count">${scrapedData.searchList.length}</span> 个视频`;
+        displayDouyinSearchData(scrapedData);
+        statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个视频`;
       } else {
         if (dataType === "user") {
           displayDouyinUserData(scrapedData);
@@ -1823,7 +1833,6 @@ function displayXiaohongshuUserData(data) {
     avatarImg1.style.objectFit = "cover";
     avatarImg1.style.border = "3px solid #ff2442";
     avatarContainer.appendChild(avatarImg1);
-    avatarContainer.appendChild(avatarContainer);
   }
   userInfo.appendChild(avatarContainer);
   const userDetails = document.createElement("div");
@@ -1924,7 +1933,7 @@ function displayXiaohongshuUserData(data) {
     },
     {
       label: "笔记",
-      value: data.noteCount || "0",
+      value: data.postCount || "0",
     },
   ];
   stats.forEach((item) => {

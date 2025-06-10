@@ -760,7 +760,5 @@ async function scrapeDouyinSearchData() {
   const _0x54689a = new _0x55664f(_0x2e0b2d);
   const _0x1dd55a = await _0x54689a.getData(100);
   console.log("共抓取到 " + _0x1dd55a.length + " 个视频数据");
-  return {
-    searchList: _0x1dd55a,
-  };
+  return _0x1dd55a;
 }

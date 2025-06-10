@@ -1045,11 +1045,15 @@ async function scrapeVideoComments(_0x30bed4 = 100, _0x3f8a55 = false) {
         const _0x1ff05a = _0x577294 ? _0x577294.textContent.trim() : "";
         const _0x5e24a5 =
           _0x2244cc + "-" + _0x53b60f.substring(0, 50) + "-" + _0x2aeb8e;
+        const avatarImg =
+          _0x2eeaeb
+            .querySelector('div[class*="comment-item-avatar"]')
+            .querySelector("img")?.src || "";
         if (!_0x2ba161.has(_0x5e24a5)) {
           _0x2ba161.add(_0x5e24a5);
           _0x8a629f.push({
             userName: _0x2244cc,
-            avatar: "",
+            avatar: avatarImg,
             content: _0x53b60f,
             likes: _0x1ff05a,
             date: _0x1d8d0b,
