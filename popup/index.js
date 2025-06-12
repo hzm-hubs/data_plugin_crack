@@ -1816,7 +1816,7 @@ function displayXiaohongshuUserData(data) {
   userInfo.style.display = "flex";
   userInfo.style.marginBottom = "20px";
   userInfo.style.padding = "24px";
-  userInfo.style.backgroundColor = "#fff";
+  userInfo.style.backgroundColor = "#f9f9f9";
   userInfo.style.borderRadius = "16px";
   userInfo.style.boxShadow = "0 2px 12px rgba(0, 0, 0, 0.08)";
   const avatarContainer = document.createElement("div");
