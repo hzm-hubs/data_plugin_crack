@@ -48,7 +48,7 @@ async function scrapeAndRespond() {
 }
 async function extractData(pageType) {
   let fetchedData = [];
-  pageType = "search";
+  pageType = "unsupported";
   const currentDomain =
     typeof domainHelper !== "undefined" ? domainHelper.getDomain() : "other";
   const currentUrl = window.location.href;
