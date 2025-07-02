@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "掘金抓取插件",
+  "name": "数据通AI分析软件",
   "version": "1.4",
   "description": "智能化抓取电商与自媒体数据，实时导入飞书多维表格，驱动精准分析与数据驱动决策，提升业务洞察力与运营效率",
   "author": "superman",
@@ -45,7 +45,9 @@
       "run_at": "document_end"
     },
     {
-      "matches": ["https://www.douyin.com/*"],
+      "matches": [
+        "https://www.douyin.com/*"
+      ],
       "js": [
         "common/domainHelper.js",
         "common/utils.js",
@@ -74,7 +76,9 @@
       "run_at": "document_end"
     },
     {
-      "matches": ["https://myseller.taobao.com/home.htm/alltaopromotion/*"],
+      "matches": [
+        "https://myseller.taobao.com/home.htm/alltaopromotion/*"
+      ],
       "js": [
         "common/domainHelper.js",
         "common/utils.js",
@@ -84,7 +88,9 @@
       "run_at": "document_end"
     },
     {
-      "matches": ["https://one.alimama.com/index.html?*"],
+      "matches": [
+        "https://one.alimama.com/index.html?*"
+      ],
       "js": [
         "common/domainHelper.js",
         "common/utils.js",
