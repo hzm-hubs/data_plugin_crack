@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
           document.getElementById("exportJsonBtn").style.display =
             "inline-block";
         } else {
-          pageTitle.innerText = "数据通AI分析软件";
+          pageTitle.innerText = "数聚通AI分析软件";
         }
       }
     }
