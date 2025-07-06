@@ -8,6 +8,20 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
     documentLink: "", // 文档链接
     cozeToken: "", // 授权码
   };
+  let isLogin = false; // 是否登录过
+  chrome.storage.local.get("isLogin", function (result) {
+    if (result.isLogin) {
+      isLogin = JSON.parse(result.isLogin) || false;
+    }
+    if (isLogin) {
+      changeDisplay("controls", "remove");
+      changeDisplay("result", "remove");
+      setStatusContent("欢迎使用！");
+      changeDisplay("settingBtnRow");
+      changeDisplay("settingsPanel");
+      fetchCurrentTabData();
+    }
+  });
   // 设置初始值
   function setInitValue(targetId, value) {
     document.getElementById(targetId).value = value;
@@ -23,6 +37,14 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
         }
       }
     });
+  }
+  function changeDisplay(eleId = "", type = "add") {
+    const targetEle = document.getElementById(eleId);
+    if (type == "add") {
+      targetEle.classList.add("hide-element");
+    } else {
+      targetEle.classList.remove("hide-element");
+    }
   }
   fetchAppInfo();
   function addListen(targetId, callBack = null, type = "click") {
@@ -61,33 +83,27 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
     addListen(it, (e) => handleChange(it, e), "change")
   );
   function saveSettings() {
-    const baseUrl = document.getElementById("documentLink").value.trim();
-    if (baseUrl) {
-      chrome.storage.local.set(
-        {
-          documentLink: baseUrl,
-        },
-        function () {
-          const saveMsg = document.createElement("div");
-          saveMsg.textContent = "设置已保存";
-          saveMsg.style.color = "#4CAF50";
-          saveMsg.style.marginTop = "5px";
-          saveMsg.style.textAlign = "right";
-          const settingsPanel = document.getElementById("settingsPanel");
-          const saveStatus = settingsPanel.querySelector(".save-status");
-          if (saveStatus) {
-            saveStatus.remove();
-          }
-          saveMsg.className = "save-status";
-          settingsPanel.appendChild(saveMsg);
-          setTimeout(() => {
-            saveMsg.remove();
-          }, 3000);
-        }
-      );
-    } else {
-      alert("请输入有效的飞书多维表格URL");
+    const appId = document.getElementById("appId").value.trim();
+    if (!appId) {
+      return setStatusContent("请填写您的应用ID");
     }
+    const cozeToken = document.getElementById("cozeToken").value.trim();
+    if (!cozeToken) {
+      return setStatusContent("请填写授权码");
+    }
+    const documentLink = document.getElementById("documentLink").value.trim();
+    if (!documentLink) {
+      return setStatusContent("请填写您的文档链接");
+    }
+    changeDisplay("controls", "remove");
+    changeDisplay("result", "remove");
+    setStatusContent("欢迎使用！");
+    changeDisplay("settingBtnRow");
+    changeDisplay("settingsPanel");
+    isLogin = true;
+    chrome.storage.local.set({
+      isLogin,
+    });
   }
   document.getElementById("settingsBtn").addEventListener("click", function () {
     const triggerEle = document.getElementById("settingsBtn");
@@ -100,11 +116,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
       triggerEle.innerText = "打开设置";
     }
   });
-  // document
-  // 	.getElementById("saveSettingsBtn")
-  // 	.addEventListener("click", function () {
-  // 		saveSettings();
-  // 	});
+  document
+    .getElementById("saveSettingsBtn")
+    .addEventListener("click", function () {
+      saveSettings();
+    });
   function setPageTitle(domain) {
     const pageTitle = document.getElementById("pageTitle");
     if (domain === "myseller") {
@@ -113,8 +129,8 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
       document.getElementById("exportJsonBtn").style.display = "inline-block";
     } else if (domain == "one") {
       pageTitle.innerText = "万相台数据抓取";
-      document.getElementById("exportBtn").classList.add("hide-element");
-      document.getElementById("exportExcel").classList.remove("hide-element");
+      changeDisplay("exportBtn");
+      changeDisplay("exportExcel", "remove");
     } else if (domain === "taobao" || domain === "tmall") {
       pageTitle.innerText = "淘宝数据抓取";
       document.getElementById("exportBtn").style.display = "inline-block";
@@ -131,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
           document.getElementById("exportJsonBtn").style.display =
             "inline-block";
         } else {
-          pageTitle.innerText = "数聚通AI分析软件";
+          pageTitle.innerText = "数聚通分析软件";
         }
       }
     }
@@ -244,6 +260,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
         refresh: true,
       },
       function (response) {
+        setStatusContent("正在抓取数据...");
         if (intervalId) {
           clearInterval(intervalId);
           intervalId = null;
@@ -318,7 +335,6 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
       }
     );
   }
-  fetchCurrentTabData();
   document.getElementById("refreshBtn").addEventListener("click", function () {
     chrome.tabs.query(
       {
@@ -412,9 +428,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
             };
             if (!appInfo.documentLink) {
               alert("请先在设置中配置飞书多维表格URL");
-              document
-                .getElementById("settingsPanel")
-                .classList.remove("hide-element");
+              changeDisplay("settingsPanel", "remove");
               return;
             }
             setStatusContent("正在导出数据到飞书多维表格...");
@@ -442,7 +456,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
               .then((backData) => {
                 console.log("工作流API详细响应:", JSON.stringify(backData));
                 if (backData.code !== 0) {
-                  setStatusContent(backData.msg);
+                  if (backData.code == "700012006") {
+                    setStatusContent("授权码失效或格式有误");
+                  } else {
+                    setStatusContent(backData.msg);
+                  }
                   return;
                 }
                 backData = JSON.parse(backData.data);

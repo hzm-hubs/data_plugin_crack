@@ -2,14 +2,21 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>数聚通AI分析软件</title>
+    <title>数聚通分析软件</title>
     <link href="./index.css" rel="stylesheet" />
+    <link href="./main.css" rel="stylesheet" />
   </head>
   <body>
-    <h1 id="pageTitle">数聚通AI分析软件</h1>
+    <h1 id="pageTitle">数聚通分析软件</h1>
 
-    <div class="controls" style="display: flex; flex-direction: column">
-      <div class="status" id="status">准备抓取数据...</div>
+    <div class="status" id="status">欢迎使用！</div>
+
+    <!-- 操作按钮 -->
+    <div
+      class="controls hide-element"
+      id="controls"
+      style="display: flex; flex-direction: column"
+    >
       <div
         class="buttons"
         style="
@@ -36,35 +43,34 @@
     </div>
 
     <!-- 设置面板 -->
-    <div id="settingsPanel" class="settings-panel hide-element">
-      <div>
-        <div class="setting-label">授权码:</div>
+    <div id="settingsPanel" class="settings-panel">
+      <div class="settings-row">
+        <div class="settings-label">用户ID:</div>
+        <input type="text" id="appId" placeholder="请填写您的ID" />
+      </div>
+      <div class="settings-row">
+        <div class="settings-label">授权码:</div>
         <input type="text" id="cozeToken" placeholder="请填写" />
       </div>
-      <div>
-        <div class="setting-label">应用ID:</div>
-        <input type="text" id="appId" placeholder="请填写" />
-      </div>
-      <div>
-        <div class="setting-label">文档链接:</div>
+      <div class="settings-row">
+        <div class="settings-label">文档链接:</div>
         <input
           type="text"
           id="documentLink"
           placeholder="例如: https://mideqnf1p7d.feishu.cn/base/TAAsbKNniaMaodss84tcEQSun3f?table=tbllpvh8BykaNQBM&view=vewvd05oOX"
         />
       </div>
-      <!-- <div style="display: flex; justify-content: flex-end">
-				<button
-					id="saveSettingsBtn"
-					class="btn"
-					style="background-color: #2196f3"
-				>
-					保存设置
-				</button>
-			</div> -->
+      <div id="settingBtnRow" class="settings-row">
+        <button
+          id="saveSettingsBtn"
+          class="settings-btn"
+        >
+          登录
+        </button>
+      </div>
     </div>
 
-    <div id="result"></div>
+    <div id="result" class="hide-element"></div>
 
     <script src="./index.js"></script>
   </body>
