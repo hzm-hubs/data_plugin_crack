@@ -1028,23 +1028,23 @@ async function scrapeVideoComments(_0x30bed4 = 100, _0x3f8a55 = false) {
     for (const _0x2eeaeb of _0x2037cb) {
       try {
         _0x2aeb8e++;
-        const _0x21b323 = _0x2eeaeb.querySelector(".j5WZzJdp.E7y2ZDk0");
-        const _0x2244cc = _0x21b323 ? _0x21b323.textContent.trim() : "";
-        const _0x56366e = _0x2eeaeb.querySelector(".LvAtyU_f .sU2yAQQU");
-        let _0x53b60f = _0x56366e ? _0x56366e.textContent.trim() : "";
-        const _0x46d565 = _0x2eeaeb.querySelector(".GOkWHE6S");
+        const _0x21b323 = _0x2eeaeb.querySelector(".Vrj4Q3zT .jzhUi9rG");
+        const itemUserName = _0x21b323 ? _0x21b323.textContent.trim() : "";
+        const _0x56366e = _0x2eeaeb.querySelector(".C7LroK_h");
+        let itemContent = _0x56366e ? _0x56366e.textContent.trim() : "";
+        const _0x46d565 = _0x2eeaeb.querySelector(".fJhvAqos");
         const _0x398ac6 = _0x46d565 ? _0x46d565.textContent.trim() : "";
-        let _0x1d8d0b = "";
-        let _0x11505c = "";
+        let itemDate = "";
+        let itemLocation = "";
         if (_0x398ac6) {
           const _0x24aa52 = _0x398ac6.split("·");
-          _0x1d8d0b = _0x24aa52[0] ? _0x24aa52[0].trim() : "";
-          _0x11505c = _0x24aa52[1] ? _0x24aa52[1].trim() : "";
+          itemDate = _0x24aa52[0] ? _0x24aa52[0].trim() : "";
+          itemLocation = _0x24aa52[1] ? _0x24aa52[1].trim() : "";
         }
-        const _0x577294 = _0x2eeaeb.querySelector(".wiQmZrKV span");
-        const _0x1ff05a = _0x577294 ? _0x577294.textContent.trim() : "";
+        const _0x577294 = _0x2eeaeb.querySelector(".xZhLomAs span");
+        const itemLIkes = _0x577294 ? _0x577294.textContent.trim() : "";
         const _0x5e24a5 =
-          _0x2244cc + "-" + _0x53b60f.substring(0, 50) + "-" + _0x2aeb8e;
+          itemUserName + "-" + itemContent.substring(0, 50) + "-" + _0x2aeb8e;
         const avatarImg =
           _0x2eeaeb
             .querySelector('div[class*="comment-item-avatar"]')
@@ -1052,12 +1052,12 @@ async function scrapeVideoComments(_0x30bed4 = 100, _0x3f8a55 = false) {
         if (!_0x2ba161.has(_0x5e24a5)) {
           _0x2ba161.add(_0x5e24a5);
           _0x8a629f.push({
-            userName: _0x2244cc,
+            userName: itemUserName,
             avatar: avatarImg,
-            content: _0x53b60f,
-            likes: _0x1ff05a,
-            date: _0x1d8d0b,
-            location: _0x11505c,
+            content: itemContent,
+            likes: itemLIkes,
+            date: itemDate,
+            location: itemLocation,
             isAuthor: false,
           });
           if (_0x8a629f.length >= _0x30bed4) {
