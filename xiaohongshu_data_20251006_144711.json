@@ -1,0 +1,37 @@
+{
+  "domain": "xiaohongshu",
+  "type": "user",
+  "data": {
+    "userId": "272811579",
+    "username": "小越小越",
+    "avatar": "https://sns-avatar-qc.xhscdn.com/avatar/60e9e3f35c6f953b8a648889.jpg?imageView2/2/w/540/format/webp|imageMogr2/strip2",
+    "description": "没有口音的东北人\n📮yeq@ruhnn.com\n🫧 Sinkiyeee",
+    "age": "",
+    "gender": "女",
+    "constellation": "金牛座",
+    "location": "",
+    "ipLocation": "浙江",
+    "following": "10+",
+    "followers": "1万+",
+    "likes": "1万+",
+    "postCount": 1,
+    "verified": "",
+    "notes": [
+      {
+        "title": "🍏当我用胶片记录生活*🎞️",
+        "cover": "https://sns-webpic-qc.xhscdn.com/202510061446/6e1809f9400886e92baf39ad770b973d/1040g00831ho1tntq42004a0ki9g4lbphfpcron8!nc_n_webp_mw_1",
+        "author": "小越小越",
+        "authorID": "",
+        "authorLink": "https://www.xiaohongshu.com/user/profile/5a4ba04ae8ac2b786b4eaf31?xsec_token=AB8T6M-QjmmaBgLc6NCjOE932rsxAhvmWKNrkC4R9NZ2o=&xsec_source=pc_feed",
+        "authorAvatar": "https://sns-avatar-qc.xhscdn.com/avatar/60e9e3f35c6f953b8a648889.jpg?imageView2/2/w/540/format/webp|imageMogr2/strip2",
+        "link": "https://www.xiaohongshu.com/user/profile/5a4ba04ae8ac2b786b4eaf31/?xsec_token=ABy7pI9i5lY6pxuvLPEZShC4oc_WzKNUesIzBEhzDw0g0=&xsec_source=pc_user",
+        "likes": "1万+",
+        "isTop": true,
+        "duration": "",
+        "publishTime": ""
+      }
+    ]
+  },
+  "url": "https://www.xiaohongshu.com/user/profile/5a4ba04ae8ac2b786b4eaf31?xsec_token=AB8T6M-QjmmaBgLc6NCjOE932rsxAhvmWKNrkC4R9NZ2o=&xsec_source=pc_feed",
+  "fetchTime": "2025/10/6 14:47:11"
+}

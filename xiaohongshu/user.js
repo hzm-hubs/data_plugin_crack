@@ -133,6 +133,7 @@ function scrapeXiaohongshuUserData(refresh = false) {
         const noteItems = feedsContainer.querySelectorAll(".note-item");
         console.log(`当前页面找到 ${noteItems.length} 个笔记元素`);
         noteCount = 0;
+        // todo notes selector
         for (const noteItem of noteItems) {
           try {
             const noteLink =
@@ -144,6 +145,7 @@ function scrapeXiaohongshuUserData(refresh = false) {
               continue;
             }
             const noteUrl = noteLink.href;
+            // 需要登录才能查看笔记，不然noteUrl都是一样的，点击弹出登录框
             if (uniqueLinks.has(noteUrl)) {
               continue;
             }

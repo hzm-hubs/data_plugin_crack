@@ -319,6 +319,7 @@ async function scrapeNoteComments(maxComments = 100) {
   const comments = [];
   const commentIds = new Set();
   try {
+    // todo comments selector
     const commentsContainer = await waitForElement(".comments-el", 10000);
     if (!commentsContainer) {
       console.log("未找到评论容器，跳过评论抓取");
@@ -329,7 +330,7 @@ async function scrapeNoteComments(maxComments = 100) {
       ? totalCommentsElement.textContent.trim()
       : "";
     const totalMatch = totalComments.match(
-      new RegExp("共\\s*(\\d+)\\s*条评论", "")
+      new RegExp("共\\s*(\\d+)[\\s*条评论|+\\s*条评论]", "")
     );
     const totalCommentsCount = totalMatch ? parseInt(totalMatch[1]) : 0;
     console.log(`总评论数: ${totalCommentsCount}`);

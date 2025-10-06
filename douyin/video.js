@@ -1028,6 +1028,7 @@ async function scrapeVideoComments(_0x30bed4 = 100, _0x3f8a55 = false) {
     for (const _0x2eeaeb of _0x2037cb) {
       try {
         _0x2aeb8e++;
+        // todo comment-item selector
         const _0x21b323 = _0x2eeaeb.querySelector(".Vrj4Q3zT .jzhUi9rG");
         const itemUserName = _0x21b323 ? _0x21b323.textContent.trim() : "";
         const _0x56366e = _0x2eeaeb.querySelector(".C7LroK_h");

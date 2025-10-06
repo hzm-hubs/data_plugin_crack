@@ -334,7 +334,8 @@ async function scrapeDouyinUserData() {
   }
   if (!_0x8262b9) {
     const _0x3149ea = _0x227b2f.querySelector(
-      "div.DtlymgqL span span span span span span"
+      // todo description selector
+      "div.lFECd241 span span span span span span"
     );
     if (_0x3149ea) {
       _0x8262b9 = _0x3149ea[_0x583712(354)][_0x583712(303)]();
