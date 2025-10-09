@@ -438,6 +438,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
                   data: exportData,
                   app_id: appInfo.appId,
                   documentLink: appInfo.documentLink,
+                  version: "1.5",
                 },
               },
               workflow_id: "7505701175690477579",
