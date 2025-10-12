@@ -314,7 +314,7 @@ async function scrapeComments(maxComments) {
       }
       console.log("尝试查找其他可能的评论面板");
       const commentSelectors = [
-        'div[class*="Comments--"]',
+        // 'div[class*="Comments--"]',
         'div[class*="comments--"]',
         "div.content--ew3Y4lVg",
         ".tb-revbd",
@@ -329,7 +329,9 @@ async function scrapeComments(maxComments) {
       let commentsPanel = null;
       for (const selector of commentSelectors) {
         try {
-          const commentsPanel1 = document.querySelector(selector);
+          const commentsPanel1 = document
+            .querySelector('div[class*="Drawer--"]')
+            .querySelector(selector);
           if (commentsPanel1) {
             commentsPanel = commentsPanel1;
             console.log(`找到评论面板:`, selector);
@@ -507,14 +509,14 @@ function loadAllComments(commentsPanel, maxComments = 100) {
         ? 500
         : maxComments < 10
         ? 50
-        : 200;
+        : 100;
     console.log(`设置最大滚动尝试次数: ${maxScrollAttempts}`);
     let commentCount = 0;
     let scrollFailures = 0;
     const maxFails = 15;
     function getComments() {
       const selectors = [
-        ".Comment--KkPcz74T",
+        ".Comment--H5QmJwe9",
         'div[class*="Comment--"]',
         ".comment-item",
         "div.contentWrapper--uAdAlCgC",
@@ -907,7 +909,7 @@ function extractComments(commentsPanel, bestSelector) {
         );
       }
       let commentimgs = [];
-      let commentImgBlocks = element.querySelectorAll("div[class*=-photo-]");
+      let commentImgBlocks = element.querySelectorAll("div[class*=photo--]");
       if (commentImgBlocks?.length) {
         commentImgBlocks.forEach((it) => {
           const tempImg = it.querySelector("img")?.src || "";
