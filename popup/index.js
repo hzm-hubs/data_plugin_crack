@@ -427,11 +427,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
               url: tabUrl,
             };
             if (!appInfo.documentLink) {
-              alert("请先在设置中配置飞书多维表格URL");
+              alert("请先在设置中配置多维表格URL");
               changeDisplay("settingsPanel", "remove");
               return;
             }
-            setStatusContent("正在导出数据到飞书多维表格...");
+            setStatusContent("正在导出数据到多维表格...");
             const workflowPayload = {
               parameters: {
                 input: {

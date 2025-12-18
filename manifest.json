@@ -1,109 +1,103 @@
 {
-  "manifest_version": 3,
-  "name": "数聚通分析软件",
-  "version": "1.5.1",
-  "description": "智能化抓取电商与自媒体数据，实时导入飞书多维表格，驱动精准分析与数据驱动决策，提升业务洞察力与运营效率",
-  "author": "superman",
-  "permissions": [
-    "tabs",
-    "activeTab",
-    "scripting",
-    "storage",
-    "webRequest",
-    "webRequestBlocking"
-  ],
-  "host_permissions": [
-    "https://s.taobao.com/search*",
-    "https://item.taobao.com/item*",
-    "https://detail.tmall.com/item*",
-    "https://www.douyin.com/search*",
-    "https://www.douyin.com/*/search*",
-    "https://www.douyin.com/user/*",
-    "https://www.douyin.com/video/*",
-    "https://www.douyin.com/*modal_id=*",
-    "https://www.xiaohongshu.com/search*",
-    "https://www.xiaohongshu.com/explore*",
-    "https://www.xiaohongshu.com/user/profile/*",
-    "https://one.alimama.com/index.html?*"
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "https://s.taobao.com/search*",
-        "https://item.taobao.com/item*",
-        "https://detail.tmall.com/item*"
-      ],
-      "js": [
-        "common/domainHelper.js",
-        "common/utils.js",
-        "taobao/skuScraper.js",
-        "taobao/search.js",
-        "taobao/detail.js",
-        "taobao/comment.js",
-        "content.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
-        "https://www.douyin.com/*"
-      ],
-      "js": [
-        "common/domainHelper.js",
-        "common/utils.js",
-        "douyin/search.js",
-        "douyin/user.js",
-        "douyin/video.js",
-        "douyin/videoSniffing.js",
-        "content.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
-        "https://www.xiaohongshu.com/search*",
-        "https://www.xiaohongshu.com/explore*",
-        "https://www.xiaohongshu.com/user/profile/*"
-      ],
-      "js": [
-        "common/domainHelper.js",
-        "common/utils.js",
-        "xiaohongshu/search.js",
-        "xiaohongshu/user.js",
-        "xiaohongshu/note.js",
-        "content.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
-        "https://myseller.taobao.com/home.htm/alltaopromotion/*"
-      ],
-      "js": [
-        "common/domainHelper.js",
-        "common/utils.js",
-        "myseller/alltaopromotion.js",
-        "content.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
-        "https://one.alimama.com/index.html?*"
-      ],
-      "js": [
-        "common/domainHelper.js",
-        "common/utils.js",
-        "one/onesite.js",
-        "content.js"
-      ],
-      "run_at": "document_end"
-    }
-  ],
-  "action": {
-    "default_popup": "popup/index.html"
-  },
-  "background": {
-    "service_worker": "background.js"
-  }
+	"manifest_version": 3,
+	"name": "数聚通分析软件",
+	"version": "1.5.2",
+	"description": "智能化抓取电商与自媒体数据，实时导入多维表格，驱动精准分析与数据驱动决策，提升业务洞察力与运营效率",
+	"author": "superman",
+	"permissions": [
+		"tabs",
+		"activeTab",
+		"scripting",
+		"storage",
+		"webRequest",
+		"webRequestBlocking"
+	],
+	"host_permissions": [
+		"https://s.taobao.com/search*",
+		"https://item.taobao.com/item*",
+		"https://detail.tmall.com/item*",
+		"https://www.douyin.com/search*",
+		"https://www.douyin.com/*/search*",
+		"https://www.douyin.com/user/*",
+		"https://www.douyin.com/video/*",
+		"https://www.douyin.com/*modal_id=*",
+		"https://www.xiaohongshu.com/search*",
+		"https://www.xiaohongshu.com/explore*",
+		"https://www.xiaohongshu.com/user/profile/*",
+		"https://one.alimama.com/index.html?*"
+	],
+	"content_scripts": [
+		{
+			"matches": [
+				"https://s.taobao.com/search*",
+				"https://item.taobao.com/item*",
+				"https://detail.tmall.com/item*"
+			],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"taobao/skuScraper.js",
+				"taobao/search.js",
+				"taobao/detail.js",
+				"taobao/comment.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://www.douyin.com/*"],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"douyin/search.js",
+				"douyin/user.js",
+				"douyin/video.js",
+				"douyin/videoSniffing.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": [
+				"https://www.xiaohongshu.com/search*",
+				"https://www.xiaohongshu.com/explore*",
+				"https://www.xiaohongshu.com/user/profile/*"
+			],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"xiaohongshu/search.js",
+				"xiaohongshu/user.js",
+				"xiaohongshu/note.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://myseller.taobao.com/home.htm/alltaopromotion/*"],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"myseller/alltaopromotion.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://one.alimama.com/index.html?*"],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"one/onesite.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		}
+	],
+	"action": {
+		"default_popup": "popup/index.html"
+	},
+	"background": {
+		"service_worker": "background.js"
+	}
 }
