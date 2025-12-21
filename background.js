@@ -1,80 +1,13 @@
-chrome.runtime.onInstalled.addListener(function () {
-  console.log("数据抓取工具已安装");
-});
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.action === "updateData") {
-    console.log(
-      "收到数据更新消息，域名:",
-      request.domain,
-      "数据类型:",
-      request.type,
-      "页面URL:",
-      request.url
-    );
-    if (request.domain === "douyin") {
-      if (request.type === "video") {
-        console.log("抖音视频详情数据:", request.data.title);
-      } else {
-        if (request.type === "user") {
-          console.log(
-            "抖音用户数据:",
-            request.data.nickname,
-            "视频数量:",
-            request.data.videos ? request.data.videos.length : 0
-          );
-        } else {
-          if (request.type === "search") {
-            console.log("抖音搜索数据条数:", request.data.length);
-          }
+var background=function(){"use strict";var B=Object.defineProperty;var j=(y,b,m)=>b in y?B(y,b,{enumerable:!0,configurable:!0,writable:!0,value:m}):y[b]=m;var f=(y,b,m)=>j(y,typeof b!="symbol"?b+"":b,m);var W,$;function y(c){return c==null||typeof c=="function"?{main:c}:c}const m=($=(W=globalThis.browser)==null?void 0:W.runtime)!=null&&$.id?globalThis.browser:globalThis.chrome;class R{constructor(){f(this,"sleep",e=>new Promise(t=>setTimeout(t,e)));f(this,"runDelay",async(e,t)=>new Promise(o=>setTimeout(()=>{o(e())},t)));f(this,"sendMessage",e=>{m.runtime.sendMessage({action:"updateStatus",status:e})});f(this,"sendDataWithAction",(e,t)=>{m.runtime.sendMessage({action:t,data:e})});f(this,"openPopup",(e=-1)=>{m.runtime.sendMessage({action:"openPopup",windowId:e})});f(this,"openSidePanel",(e=-1)=>{m.runtime.sendMessage({action:"openSidePanel",windowId:e})});f(this,"elementHover",(e,t=!0)=>{e.dispatchEvent(new MouseEvent(t?"mouseover":"mouseout",{bubbles:!0}))});f(this,"setElementAnimation",e=>{const t="266A247A-6C68-4F89-8D11-B767B4E7A71C",o="animation_"+t.slice(0,8),r="class_"+t.slice(0,8);if(!document.head.querySelector(`style[data-id='${t}']`)){const n=document.createElement("style");n.type="text/css",n.setAttribute("data-id",t);const l=`
+      @keyframes ${o}{
+        to {  background-color :rgb(255, 0, 0);
+              border: 1px solid blue;
+              border-radius: 3px;
         }
       }
-    } else {
-      if (request.domain === "xiaohongshu") {
-        if (request.type === "user") {
-          console.log(
-            "小红书用户数据:",
-            request.data.username,
-            "笔记数量:",
-            request.data.notes ? request.data.notes.length : 0
-          );
-        } else {
-          if (request.type === "search") {
-            console.log("小红书搜索数据条数:", request.data.length);
-          } else {
-            if (request.type === "note") {
-              console.log("小红书笔记详情数据:", request.data.title);
-            }
-          }
-        }
-      } else if (request.domain === "myseller") {
-        if (request.type === "tableList") {
-          console.log("千牛读取商品条数:", request.data.length);
-        }
-      } else {
-        if (request.domain === "taobao" || request.domain === "tmall") {
-          if (request.type === "search") {
-            console.log("淘系搜索数据条数:", request.data.length);
-          } else {
-            if (request.type === "detail") {
-              console.log("淘系详情页数据:", request.data.title);
-            }
-          }
-        } else {
-          console.log("其他域名数据:", request.domain, request.type);
-          if (request.type === "search") {
-            console.log("搜索数据条数:", request.data.length);
-          } else {
-            if (request.type === "detail") {
-              console.log("详情页数据:", request.data.title);
-            }
-          }
-        }
+    `,i=`
+      .${r} {
+        animation: ${o} 0.5s ease-in-out 0s 2 alternate none;
       }
-    }
-  } else {
-    if (request.action === "updateStatus") {
-      console.log("状态更新:", request.status);
-    }
-  }
-  return true;
-});
+    `;n.innerHTML=l+i,document.head.appendChild(n)}return e.classList.remove(r),e.offsetHeight,e.classList.add(r),e});f(this,"waitForChildListChange",async(e,t,o=5e3)=>new Promise((r,n)=>{const l=setTimeout(()=>{i&&(i.disconnect(),console.log("等待元素更新超时: ",t,`超时时间：${o}ms`),r(!1))},o),i=new MutationObserver((d,h)=>{if(d.length>0)for(const a of d)if(a.type==="attributes")a.attributeName;else if(a.type==="childList"){clearTimeout(l),h.disconnect(),r(!0);return}else a.type});i.observe(t,{childList:!0,subtree:!0,attributes:!0,attributeOldValue:!0,characterData:!0,characterDataOldValue:!0}),e&&e()}));f(this,"waitForElementTextChange",async(e,t,o=5e3)=>new Promise((r,n)=>{console.log("等待元素更新:",t,` 超时: ${o}ms`);const l=setTimeout(()=>{i&&(i.disconnect(),console.log("等待元素更新超时: ",t,`超时时间：${o}ms`),r(!1))},o),i=new MutationObserver((d,h)=>{if(d.length>0){for(const a of d)if(a.type==="attributes")a.attributeName;else if(a.type!=="childList"){if(a.type==="characterData"){clearTimeout(l),h.disconnect(),r(!0);return}}}});i.observe(t,{childList:!0,subtree:!0,attributes:!0,attributeOldValue:!0,characterData:!0,characterDataOldValue:!0}),e&&e()}));f(this,"waitForElementAttrChange",async(e,t,o=5e3)=>new Promise((r,n)=>{console.log("等待元素属性更新:",t,` 超时: ${o}ms`);const l=setTimeout(()=>{i&&(i.disconnect(),console.log("等待元素属性更新超时: ",t,`超时时间：${o}ms`),r(!1))},o),i=new MutationObserver((d,h)=>{if(d.length>0)for(const a of d)if(a.type==="attributes"){a.attributeName,clearTimeout(l),h.disconnect(),r(!0);return}else a.type==="childList"||a.type});i.observe(t,{childList:!0,subtree:!0,attributes:!0,attributeOldValue:!0,characterData:!0,characterDataOldValue:!0}),e&&e()}));f(this,"waitForElementListTextChange",async(e,t,o=5e3,r=!0)=>{let n=[];return new Promise((l,i)=>{t.forEach(d=>{this.waitForElementTextChange(()=>{},d,o).then(async h=>{n.push({target:d,result:h}),r?n.length===t.length&&l(n):n.length==1&&(await this.sleep(500),l(n))})}),e&&e()})});f(this,"waitForElementListAttrChange",async(e,t,o=5e3,r=!0)=>{let n=[];return new Promise((l,i)=>{t.forEach(d=>{this.waitForElementAttrChange(()=>{},d,o).then(async h=>{n.push({target:d,result:h}),r?n.length===t.length&&l(n):n.length==1&&(await this.sleep(500),l(n))})}),e&&e()})});f(this,"waitForElementRemove",async(e,t=5e3)=>new Promise((o,r)=>{const l=t/10;let i=0;const d=setInterval(()=>{if(!document.querySelector(e)){clearInterval(d),o(!0);return}i++,i<l?console.log("等待元素移除:",e,` 超时: ${t}ms`,`剩余时间：${t-i*10}ms`):(console.log("等待元素移除超时: ",e,`超时时间：${t}ms`),clearInterval(d),r(!1))},10)}));f(this,"scrollToElementTop",e=>{e.scrollIntoView({behavior:"smooth",block:"start",inline:"nearest"})});f(this,"scrollToElement",e=>{e.scrollIntoView({behavior:"smooth",block:"center",inline:"nearest"})});f(this,"scrollToElementBottom",e=>{e.scrollIntoView({behavior:"smooth",block:"end",inline:"nearest"})});f(this,"ensureElementVisible",e=>{let t=e;for(;t&&t!==document.body;){const i=t.parentElement;if(!i)break;const d=i.scrollHeight>i.clientHeight,h=i.scrollWidth>i.clientWidth;if(d||h){const a=i.getBoundingClientRect(),w=t.getBoundingClientRect();d&&(w.top<a.top?i.scrollTop-=a.top-w.top:w.bottom>a.bottom&&(i.scrollTop+=w.bottom-a.bottom)),h&&(w.left<a.left?i.scrollLeft-=a.left-w.left:w.right>a.right&&(i.scrollLeft+=w.right-a.right))}t=i}const o=window.scrollY,r=o+window.innerHeight,n=e.offsetTop,l=n+e.offsetHeight;n<o?window.scrollTo({top:n,behavior:"smooth"}):l>r&&window.scrollTo({top:l-window.innerHeight,behavior:"smooth"})});f(this,"getTextNodeValue",(e,t=!1)=>{this.setElementAnimation(e);const o=Array.from(e.childNodes).filter(r=>r.nodeType===Node.TEXT_NODE).map(r=>r.textContent).join("");return t?+o.replace(/[^\d-.]/g,""):o});f(this,"getElementText",(e,t=!0)=>e?(t&&this.setElementAnimation(e),e.textContent):"");f(this,"getElementTextToNumber",(e,t=!0)=>{if(e){const o=this.getElementText(e,t).replace(/[^\d-.]/g,"");return o&&!isNaN(o)?+o:o}return 0});f(this,"getUserInputNumber",async(e=10,t="请输入最大数据条数，默认10条，最小1条，最大100条",o=100)=>{let r=await this.showInput(t,e,o);for(;r;){let n=0;if(!isNaN(r)&&(n=parseInt(r),n>0&&n<=o)){e=n;break}r=await this.showInput(t,e,o)}return e});f(this,"waitElementInViewportUseObserver",async(e,t=5e3)=>new Promise((o,r)=>{this.isElementInViewport(e)&&o(!0),setTimeout(()=>{o(!1),n.disconnect()},t);const n=new IntersectionObserver(l=>{l.forEach(async i=>{i.isIntersecting&&(o(!0),n.disconnect())})});if(!e)return r("元素不存在");this.scrollToElement(e),n.observe(e)}));f(this,"waitElementInViewportUseClientRect",async(e,t=!1,o=5e3)=>{new Promise(async(r,n)=>{if(!e||typeof e.getBoundingClientRect!="function")return r(!1);let l=null;const i=()=>{const w=e.getBoundingClientRect(),x=window.innerHeight||document.documentElement.clientHeight,v=window.innerWidth||document.documentElement.clientWidth;let T=!1;if(t)T=w.top>=0&&w.bottom<=x&&w.left>=0&&w.right<=v;else{const D=w.top<=x&&w.bottom>=0,I=w.left<=v&&w.right>=0;T=D&&I}T&&(l&&clearInterval(l),r(!0))},d=10,h=parseInt(o/d+"")>0?parseInt(o/d+""):1;let a=0;l=setInterval(()=>{a++,a>h?(l&&clearInterval(l),r(!1)):i()},d)})});f(this,"isElementInViewport",e=>{const t=e.getBoundingClientRect(),o=window.innerHeight||document.documentElement.clientHeight,r=window.innerWidth||document.documentElement.clientWidth;return t.top<o&&t.bottom>0&&t.left<r&&t.right>0});f(this,"getItemTextAndLog",(e,t,o,r="")=>{const n=this.querySelector(e,t);let l=this.getElementText(n);return r&&(l=(n==null?void 0:n.getAttribute(r))||""),o&&!n&&console.log(o),l});f(this,"waitForResult",async(e,t=5e3)=>{const o=Math.floor(t/100);for(let r=0;r<o;r++){if(await e())return!0;await this.sleep(100)}return!1});f(this,"getNumberText",e=>{const t=e.match(/[\.\d]+(千万)?(万亿)?[万|亿|k|K|m|M|b|B]?/);return t?t[0]:e})}deepScroll(e){return new Promise((t,o)=>{const r=[],n={element:e.element||window,duration:e.duration||500,easing:e.easing||"easeInOutQuad",scrollContainers:r,left:e.left,top:e.top,target:e.target,callback:e.callback};function l(s){const g=[];let u=s;for(;u&&u!==document.documentElement;)i(u)&&g.push(u),u=u.parentElement;return d()&&g.push(window),g}function i(s){if(s===window||!(s instanceof HTMLElement))return!0;const g=getComputedStyle(s),u=g.overflowY==="auto"||g.overflowY==="scroll",p=g.overflowX==="auto"||g.overflowX==="scroll";return u&&s.scrollHeight>s.clientHeight||p&&s.scrollWidth>s.clientWidth}function d(){return document.documentElement.scrollHeight>window.innerHeight}function h(s,g){const u=g.getBoundingClientRect();if(s instanceof Window)return{top:a(u.top-window.pageYOffset+window.outerHeight,u.height,window.innerHeight,window.outerHeight),left:a(u.left-window.pageXOffset+window.outerWidth,u.width,window.innerWidth,window.outerWidth)};const p=s.getBoundingClientRect();return{top:a(u.top-p.top+s.scrollTop,u.height,s.clientHeight,s.scrollTop),left:a(u.left-p.left+s.scrollLeft,u.width,s.clientWidth,s.scrollLeft)}}function a(s,g,u,p){const C=p,S=p+u,A=s+g;return s>=C&&A<=S?p:s<C?s:A-u}function w(s){return s instanceof Window?window.pageYOffset:s.scrollTop}function x(s){return s instanceof Window?window.pageXOffset:s.scrollLeft}function v(s,g,u){s instanceof Window?window.scrollTo(u,g):(s.scrollTop=g,s.scrollLeft=u)}if(n.target){const s=l(n.target);let g=n.target;s.forEach(u=>{const p=h(u,g);n.scrollContainers.push({element:u,startTop:w(u),targetTop:p.top,startLeft:x(u),targetLeft:p.left}),g=u})}else n.scrollContainers.push({element:n.element,startTop:w(n.element),targetTop:n.top??w(n.element),startLeft:x(n.element),targetLeft:n.left??x(n.element)});const T={linear:s=>s,easeInQuad:s=>s*s,easeOutQuad:s=>s*(2-s),easeInOutQuad:s=>s<.5?2*s*s:-1+(4-2*s)*s},D=T[n.easing]||T.easeInOutQuad;let I=0;const O=()=>{var s;t(""),n.target,(s=n.callback)==null||s.call(n)},M=s=>{I||(I=s);const g=s-I,u=Math.min(g/n.duration,1),p=D(u);n.scrollContainers.forEach(({element:C,startTop:S,targetTop:A,startLeft:P,targetLeft:q})=>{const V=S+(A-S)*p,F=P+(q-P)*p;v(C,V,F)}),g<n.duration?requestAnimationFrame(M):O()};requestAnimationFrame(M)})}async showInput(e,t,o){return new Promise((r,n)=>{m.runtime.sendMessage({action:"showInput",placeholder:e,defaultValue:t,max:o},l=>{r(l.value)})})}simpleUUID(){return"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,e=>{const t=Math.random()*16|0;return(e==="x"?t:t&3|8).toString(16)})}formatDateTime(e,t=!1){if(typeof e=="string")e=new Date(e);else if(typeof e=="number")e=new Date(e);else if(!(e instanceof Date))return"";if(isNaN(e))return"";const o={year:e.getFullYear(),mounth:e.getMonth()+1,day:e.getDate(),hour:e.getHours(),minute:e.getMinutes(),second:e.getSeconds(),ms:e.getMilliseconds()},r=(l,i=2)=>(l+"").padStart(i,"0");let n=`${o.year}-${r(o.mounth)}-${r(o.day)} ${r(o.hour)}:${r(o.minute)}:${r(o.second)}`;return t&&(n+=`:${o.ms}`),n}formatDate(e){const t=this.formatDateTime(e);return t?t.split(" ")[0]:""}parseChineseNumber(e){const t={万亿:1e12,千亿:1e11,百亿:1e10,十亿:1e9,亿:1e8,千万:1e7,百万:1e6,万:1e4,千:1e3,百:100,十:10,k:1e3,K:1e3,m:1e6,M:1e6,b:1e9,B:1e9,t:1e12,T:1e12};let o="";for(const h in t)o?o+="|"+h:o+=h;const r=String(e).match(new RegExp(`^(\\d+.?\\d*)([${o})]*)`));if(!r)return 0;const n=parseFloat(r[1]),l=r[2].trim(),i=Object.keys(t).find(h=>l.startsWith(h)),d=i?t[i]:1;return l==="千万"?n*1e7:n*d}querySelector(e,t=[]){let o=null;for(const r of t){const n=r.match(/(.+):contains\(['"](.+)['"]\)/);if(n){const l=n[1],i=n[2];if(o=e.querySelector(l),o&&o.textContent.includes(i))break}else if(o=e.querySelector(r),o)break}return o}querySelectorAll(e,t=[]){for(const o of t){const r=o.match(/(.+):contains\(['"](.+)['"]\)/);if(r){const n=r[1],l=r[2],i=e.querySelectorAll(n);if(i&&i.length>0)return Array.from(i).filter(h=>h.textContent.includes(l))}else{const n=e.querySelectorAll(o);if(n.length>0)return Array.from(n)}}return[]}querySelectorWithText(e,t=[],o=""){let r=null;for(const n of t)if(r=e.querySelectorAll(n),r.length>0){for(const l of r)if(l.textContent.includes(o))return l}return null}querySelectorAllWithText(e,t=[],o=""){let r=null;for(const n of t)if(r=e.querySelectorAll(n),r.length>0)return Array.from(r).filter(l=>l.textContent.includes(o));return[]}}const H=new R,k=y(()=>{console.log("数据抓取工具已安装",{id:m.runtime.id}),console.log("browser",m),m.declarativeNetRequest.updateDynamicRules({addRules:[{id:1,priority:1,action:{type:"allow"},condition:{urlFilter:"*://*.*.*/*"}}],removeRuleIds:[1]}),m.declarativeNetRequest.onRuleMatchedDebug.addListener(c=>{console.log("规则匹配:",c,c.request.tabId,c.request.url),c.request.tabId>=0&&m.tabs.sendMessage(c.request.tabId,{action:"watchRequest",url:c.request.url,data:c.request})}),m.runtime.onMessage.addListener(function(c,e,t){return c.action==="updateStatus"?console.log("状态更新:",c.status):c.action==="openPopup"?m.action.openPopup({windowId:c.windowId||-1},()=>{m.runtime.lastError?console.error("打开失败:",m.runtime.lastError):console.log("弹出窗口ID:",c.windowId)}):c.action==="openSidePanel"&&m.sidePanel.open({windowId:c.windowId||-1}),!0}),m.tabs.onActivated.addListener(c=>{c.tabId&&m.tabs.get(c.tabId).then(e=>{console.log("浏览器窗口变化了",e),H.sendDataWithAction(e,"tabActive")})}),m.tabs.onUpdated.addListener((c,e,t)=>{H.sendDataWithAction(t,"tabActive")})});function U(){}function E(c,...e){}const N={debug:(...c)=>E(console.debug,...c),log:(...c)=>E(console.log,...c),warn:(...c)=>E(console.warn,...c),error:(...c)=>E(console.error,...c)};let L;try{L=k.main(),L instanceof Promise&&console.warn("The background's main() function return a promise, but it must be synchronous")}catch(c){throw N.error("The background crashed on startup!"),c}return L}();
+background;

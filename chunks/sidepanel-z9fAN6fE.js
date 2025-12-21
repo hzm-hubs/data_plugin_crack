@@ -1,0 +1,1 @@
+import{d as e,h as n,o as p,_ as s,f as c,g as o}from"./Main.vue_vue_type_script_setup_true_lang-BVsoi08R.js";const t=e({__name:"App",setup(r){return(i,m)=>(p(),n(s))}}),_=c(),a=o(t);a.use(_);a.mount("#app");
