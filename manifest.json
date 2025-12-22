@@ -1,9 +1,12 @@
 {
 	"manifest_version": 3,
 	"name": "数聚通分析软件",
-	"version": "1.5.2",
-	"description": "智能化抓取电商与自媒体数据，实时导入多维表格，驱动精准分析与数据驱动决策，提升业务洞察力与运营效率",
+	"version": "1.5.3",
+	"description": "智能化抓取电商与自媒体数据，实时导入飞书、钉钉多维表格，驱动精准分析与数据驱动决策，提升业务洞察力与运营效率",
 	"author": "superman",
+	"icons": {
+		"256": "images/256.png"
+	},
 	"permissions": [
 		"tabs",
 		"activeTab",

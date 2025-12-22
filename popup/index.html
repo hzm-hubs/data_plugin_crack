@@ -5,68 +5,62 @@
 		<title>数聚通分析软件</title>
 		<link href="./index.css" rel="stylesheet" />
 		<link href="./main.css" rel="stylesheet" />
+		<script src="./meta.js"></script>
+		<script src="./index.js" defer></script>
 	</head>
 	<body>
-		<h1 id="pageTitle">数聚通分析软件</h1>
+		<div class="root">
+			<h1 id="pageTitle">数聚通分析软件</h1>
 
-		<div class="status" id="status">欢迎使用！</div>
+			<div class="status" id="status">欢迎使用！</div>
 
-		<!-- 操作按钮 -->
-		<div
-			class="controls hide-element"
-			id="controls"
-			style="display: flex; flex-direction: column"
-		>
+			<!-- 操作按钮 -->
 			<div
-				class="buttons"
-				style="
-					display: flex;
-					justify-content: flex-end;
-					gap: 10px;
-					margin-top: 10px;
-				"
+				class="controls hide-element"
+				id="controls"
+				style="display: flex; flex-direction: column"
 			>
-				<button id="refreshBtn" class="btn">刷新数据</button>
-				<button
-					id="exportJsonBtn"
-					class="btn"
-					style="background-color: #ff9800"
+				<div
+					class="buttons"
+					style="
+						display: flex;
+						justify-content: flex-end;
+						gap: 10px;
+						margin-top: 10px;
+					"
 				>
-					导出JSON
-				</button>
-				<button id="exportBtn" class="btn">导出到云文档</button>
-				<button id="exportExcel" class="btn hide-element">导出到表格</button>
-				<button id="settingsBtn" class="btn" style="background-color: #2196f3">
-					打开设置
-				</button>
+					<button id="refreshBtn" class="btn">刷新数据</button>
+					<button
+						id="exportJsonBtn"
+						class="btn"
+						style="background-color: #ff9800"
+					>
+						导出JSON
+					</button>
+					<button id="exportBtn" class="btn">导出到云文档</button>
+					<button id="exportExcel" class="btn hide-element">导出到飞书</button>
+					<button id="exportExcelDing" class="btn hide-element">
+						导出到钉钉
+					</button>
+					<button
+						id="settingsBtn"
+						class="btn"
+						style="background-color: #2196f3"
+					>
+						打开设置
+					</button>
+				</div>
 			</div>
+
+			<!-- 设置面板 -->
+			<div id="settingsPanel" class="settings-panel">
+				<div id="dataForm"></div>
+				<div id="settingBtnRow" class="settings-footer">
+					<button id="saveSettingsBtn" class="settings-btn">登 录</button>
+				</div>
+			</div>
+
+			<div id="result" class="hide-element"></div>
 		</div>
-
-		<!-- 设置面板 -->
-		<div id="settingsPanel" class="settings-panel">
-			<div class="settings-row">
-				<div class="settings-label">用户ID:</div>
-				<input type="text" id="appId" placeholder="请填写您的ID" />
-			</div>
-			<div class="settings-row">
-				<div class="settings-label">授权码:</div>
-				<input type="text" id="cozeToken" placeholder="请填写" />
-			</div>
-			<div class="settings-row">
-				<div class="settings-label">文档链接:</div>
-				<input
-					type="text"
-					id="documentLink"
-					placeholder="例如: https://mideqnf1p7d.feishu.cn/base/TAAsbKNniaMaodss84tcEQSun3f?table=tbllpvh8BykaNQBM&view=vewvd05oOX"
-				/>
-			</div>
-			<div id="settingBtnRow" class="settings-row">
-				<button id="saveSettingsBtn" class="settings-btn">登录</button>
-			</div>
-		</div>
-
-		<div id="result" class="hide-element"></div>
-
-		<script src="./index.js"></script>
 	</body>
 </html>
