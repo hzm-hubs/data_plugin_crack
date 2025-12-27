@@ -1,3 +1,5 @@
+const mainfest = chrome.runtime.getManifest();
+
 document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	let dataArray = [];
 	dataType = "";
@@ -438,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 									data: exportData,
 									app_id: appInfo.appId,
 									documentLink: appInfo.documentLink,
-									version: "1.5",
+									version: mainfest.version,
 								},
 							},
 							workflow_id: "7505701175690477579",
