@@ -1,3 +1,5 @@
+const mainfest = chrome.runtime.getManifest();
+
 document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	// 配置信息
 	const appInfo = generateAppInfo();
@@ -70,7 +72,6 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	function setInitValue(targetId, value) {
 		document.getElementById(targetId).value = value;
 	}
-
 	function fetchAppInfo() {
 		chrome.storage.local.get("appInfo", function (result) {
 			if (chrome.runtime.lastError) {
@@ -84,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			}
 		});
 	}
-
 	function changeDisplay(eleId = "", type = "add") {
 		const targetEle = document.getElementById(eleId);
 		if (type == "add") {
@@ -93,7 +93,6 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			targetEle.classList.remove("hide-element");
 		}
 	}
-
 	function addListen(targetId, callBack = null, type = "click") {
 		if (!document) {
 			return;
@@ -140,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		const appKey = document.getElementById("appKey").value.trim();
 		const dingdingLink = document.getElementById("dingdingLink").value.trim();
 
-		if ((!appId && !feishuLink) && (!appKey && !dingdingLink)) {
+		if (!appId && !feishuLink && !appKey && !dingdingLink) {
 			return setStatusContent("请填写飞书、钉钉设置");
 		}
 
@@ -487,7 +486,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 									data: exportData,
 									app_id: appInfo.appId,
 									documentLink: appInfo.documentLink,
-									version: "1.5.3",
+									version: mainfest.version,
 								},
 							},
 							workflow_id: "7505701175690477579",
@@ -506,7 +505,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 							.then((backData) => {
 								console.log("工作流API详细响应:", JSON.stringify(backData));
 								if (backData.code !== 0) {
-									if (backData.code == "700012006") {
+									if (backData.code == "4100") {
 										setStatusContent("授权码失效或格式有误");
 									} else {
 										setStatusContent(backData.msg);
