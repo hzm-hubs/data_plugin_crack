@@ -43,6 +43,7 @@
 				"taobao/search.js",
 				"taobao/detail.js",
 				"taobao/comment.js",
+				"taobao/question.js",
 				"content.js"
 			],
 			"run_at": "document_end"
