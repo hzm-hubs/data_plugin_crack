@@ -441,7 +441,7 @@ async function scrollTaobaoDetailPage() {
 			});
 			console.log(`滚动到页面底部: ${documentHeight}/${documentHeight}`);
 			await new Promise((r) => setTimeout(r, 2000));
-			console.log('尝试点击各种"查看更多"、"展开"按钮');
+			// console.log('尝试点击各种"查看更多"、"展开"按钮');
 			// const selectors = [
 			// 	'a:contains("查看更多")',
 			// 	'button:contains("查看更多")',
