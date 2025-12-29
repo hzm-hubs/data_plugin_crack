@@ -915,7 +915,8 @@ function displayTaobaoDetailData(
 	commentList,
 	comments,
 	itemDetail,
-	commentList2
+	commentList2,
+	questions
 ) {
 	const resultElement = document.getElementById("result");
 	resultElement.innerHTML = "";
@@ -975,6 +976,35 @@ function displayTaobaoDetailData(
                 </div>
               </div>
               <div class="comment-content">${comment.content}</div>
+            </div>
+          `
+						)
+						.join("")}
+        </div>
+      </div>
+    `;
+	}
+	questions = "";
+	if (item.questions && item.questions.length > 0) {
+		questions = `
+      <div class="item-section">
+        <h3>用户评价 (${item.questions.length}条)</h3>
+        <div class="comments-container">
+          ${item.questions
+						.map(
+							(question) => `
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="comment-user">${question.content}</div>
+              </div>
+			  ${question.answerList
+					.map(
+						(ans) => `
+				<div class="comment-content">- ${ans.content}</div>
+			  `
+					)
+					.join("")}
+             
             </div>
           `
 						)

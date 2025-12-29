@@ -367,9 +367,11 @@ async function scrapeTaobaoDetailData(
 	console.log("开始抓取评论数据...");
 	const skuFunction = await scrapeComments();
 	console.log("评论数据抓取完成", skuFunction);
+	closeCommentOverlay();
 	console.log("开始抓取问大家数据...");
-	await new Promise((r) => setTimeout(r, 1000));
+	await new Promise((r) => setTimeout(r, 2000));
 	const questions = await scrapeQuestions();
+	closeQuestionOverlay();
 	console.log("问大家数据抓取完成", questions);
 	const scrapeFunction = {
 		title: productTitle,
@@ -446,100 +448,99 @@ async function scrollTaobaoDetailPage() {
 			});
 			console.log(`滚动到页面底部: ${documentHeight}/${documentHeight}`);
 			await new Promise((r) => setTimeout(r, 2000));
-			console.log('尝试点击各种"查看更多"、"展开"按钮');
-			const selectors = [
-				'a:contains("查看更多")',
-				'button:contains("查看更多")',
-				'a:contains("展开")',
-				'button:contains("展开")',
-				'a:contains("更多")',
-				'button:contains("更多")',
-				'[data-spm-click*="展开"]',
-				'[class*="expand"]',
-				'[class*="more"]',
-				'[class*="ShowMore"]',
-				'[class*="ShowButton"]',
-			];
+			// console.log('尝试点击各种"查看更多"、"展开"按钮');
+			// const selectors = [
+			// 	'a:contains("查看更多")',
+			// 	'button:contains("查看更多")',
+			// 	'a:contains("展开")',
+			// 	'button:contains("展开")',
+			// 	// 'a:contains("更多")',
+			// 	// 'button:contains("更多")',
+			// 	'[data-spm-click*="展开"]',
+			// 	'[class*="expand"]',
+			// 	// '[class*="more"]',
+			// 	'[class*="ShowMore"]',
+			// 	'[class*="ShowButton"]',
+			// ];
 			function filterByText(tagName, text) {
 				const elements = document.getElementsByTagName(tagName);
 				return Array.from(elements).filter((el) =>
 					el.textContent.includes(text)
 				);
 			}
-			for (const selector of selectors) {
-				try {
-					if (selector.includes(":contains(")) {
-						const matchResult = selector.match(
-							new RegExp('([a-z]+):contains\\("(.+)"\\)', "")
-						);
-						if (matchResult) {
-							const element = matchResult[1];
-							const searchTerm = matchResult[2];
-							const buttons = filterByText(element, searchTerm);
-							console.log(
-								`找到 ${buttons.length} 个包含文本"${searchTerm}"的 ${element} 元素`
-							);
-							for (const btn of buttons) {
-								if (btn.offsetParent !== null) {
-									console.log(`点击按钮: "${btn.textContent}"`);
-									btn.click();
-									await new Promise((r) => setTimeout(r, 1000));
-								}
-							}
-						}
-					} else {
-						const buttons = document.querySelectorAll(selector);
-						console.log(
-							`找到 ${buttons.length} 个匹配选择器 "${selector}" 的元素`
-						);
-						for (const btn of buttons) {
-							if (btn.offsetParent !== null) {
-								console.log(`点击按钮: "${btn.textContent || selector}"`);
-								btn.click();
-								await new Promise((r) => setTimeout(r, 1000));
-							}
-						}
-					}
-				} catch (e) {
-					console.error(`选择器 ${selector} 出错:`, e);
-				}
-			}
+			// for (const selector of selectors) {
+			// 	try {
+			// 		if (selector.includes(":contains(")) {
+			// 			const matchResult = selector.match(
+			// 				new RegExp('([a-z]+):contains\\("(.+)"\\)', "")
+			// 			);
+			// 			if (matchResult) {
+			// 				const element = matchResult[1];
+			// 				const searchTerm = matchResult[2];
+			// 				const buttons = filterByText(element, searchTerm);
+			// 				console.log(
+			// 					`找到 ${buttons.length} 个包含文本"${searchTerm}"的 ${element} 元素`
+			// 				);
+			// 				for (const btn of buttons) {
+			// 					if (btn.offsetParent !== null) {
+			// 						console.log(`点击按钮1: "${btn.textContent}"`);
+			// 						btn.click();
+			// 						await new Promise((r) => setTimeout(r, 1000));
+			// 					}
+			// 				}
+			// 			}
+			// 		} else {
+			// 			const buttons = document.querySelectorAll(selector);
+			// 			console.log(
+			// 				`找到 ${buttons.length} 个匹配选择器 "${selector}" 的元素`
+			// 			);
+			// 			for (const btn of buttons) {
+			// 				if (btn.offsetParent !== null) {
+			// 					console.log(`点击按钮2: "${btn.textContent || selector}"`);
+			// 					btn.click();
+			// 					await new Promise((r) => setTimeout(r, 1000));
+			// 				}
+			// 			}
+			// 		}
+			// 	} catch (e) {
+			// 		console.error(`选择器 ${selector} 出错:`, e);
+			// 	}
+			// }
 			console.log("再次滚动页面以确保所有内容都加载出来");
 			window.scrollTo({
-				top: documentHeight * 0.25,
+				top: documentHeight * 0.4,
+				behavior: "smooth",
+			});
+			await new Promise((r) => setTimeout(r, 3100));
+			window.scrollTo({
+				top: documentHeight * 0.2,
 				behavior: "smooth",
 			});
 			await new Promise((r) => setTimeout(r, 1000));
 			window.scrollTo({
-				top: documentHeight * 0.5,
+				top: documentHeight * 0.8,
 				behavior: "smooth",
 			});
-			await new Promise((r) => setTimeout(r, 1000));
-			window.scrollTo({
-				top: documentHeight * 0.75,
-				behavior: "smooth",
-			});
-			await new Promise((r) => setTimeout(r, 1000));
+			await new Promise((r) => setTimeout(r, 2000));
 			window.scrollTo({
 				top: documentHeight,
 				behavior: "smooth",
 			});
-			await new Promise((r) => setTimeout(r, 3000));
-			const viewMoreButtons = filterByText("a", "查看更多评价").concat(
-				filterByText("button", "查看更多评价"),
-				filterByText("div", "查看更多评价"),
-				filterByText("span", "全部评价")
-			);
-			if (viewMoreButtons.length > 0) {
-				console.log(`找到 ${viewMoreButtons.length} 个"查看更多评价"按钮`);
-				for (const btn of viewMoreButtons) {
-					if (btn.offsetParent !== null) {
-						console.log(`点击"${btn.textContent}"按钮`);
-						btn.click();
-						await new Promise((r) => setTimeout(r, 2000));
-					}
-				}
-			}
+			await new Promise((r) => setTimeout(r, 1000));
+			// const viewMoreButtons = filterByText("a", "查看更多评价").concat(
+			// 	filterByText("div", "查看全部评价"),
+			// 	filterByText("span", "全部评价")
+			// );
+			// if (viewMoreButtons.length > 0) {
+			// 	console.log(`找到 ${viewMoreButtons.length} 个"查看更多评价"按钮`);
+			// 	for (const btn of viewMoreButtons) {
+			// 		if (btn.offsetParent !== null) {
+			// 			console.log(`点击"${btn.textContent}"按钮`);
+			// 			btn.click();
+			// 			await new Promise((r) => setTimeout(r, 2000));
+			// 		}
+			// 	}
+			// }
 			// const questionAllButtons = filterByText("a", "问大家").concat(
 			// 	filterByText("div", "查看全部回答"),
 			// 	filterByText("span", "全部回答")

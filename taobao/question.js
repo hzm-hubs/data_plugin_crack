@@ -96,7 +96,7 @@ async function scrapeQuestions(maxQuestions) {
 
 		console.log('尝试点击"全部问答"按钮');
 		const parseCommentCount = [
-			'div[class*="bottomBtn"]',
+			'div[class*="bottomBtn--"]',
 			'div:contains("全部问答")',
 		];
 		function findElements(selector, text) {
@@ -123,7 +123,7 @@ async function scrapeQuestions(maxQuestions) {
 					const questionBtn = document.querySelector(selector);
 					if (questionBtn) {
 						parseCommentCount2 = questionBtn;
-						console.log(`找到全部评价按钮:`, selector);
+						console.log(`找到全部问答按钮:`, selector);
 						break;
 					}
 				}
@@ -133,10 +133,10 @@ async function scrapeQuestions(maxQuestions) {
 		}
 		console.log("parseCommentCount2", parseCommentCount2);
 		if (parseCommentCount2) {
-			console.log('点击"全部评价"按钮');
+			console.log('点击"全部问答"按钮');
 			chrome.runtime.sendMessage({
 				action: "updateStatus",
-				status: '正在点击"全部评价"按钮...',
+				status: '正在点击"全部问答"按钮...',
 			});
 			parseCommentCount2.click();
 			console.log("等待问题面板加载");
@@ -221,7 +221,7 @@ async function scrapeQuestions(maxQuestions) {
 				console.log("未找到leftDrawer容器");
 			}
 		} else {
-			console.log('未找到"全部评价"按钮，尝试直接查找问题');
+			console.log('未找到"全部问答"按钮，尝试直接查找问题');
 		}
 
 		console.log("尝试使用备用方法");
@@ -555,7 +555,7 @@ function extractQuestions(questionsPanel, bestSelector) {
 							);
 
 							const answerContent = findItemContent(
-								'div[class*="answerContent--"]',
+								'div[class*="initContent"] [class*="convertEmoji--"],div[class*="answerContent--"]',
 								ansElement
 							);
 
@@ -586,12 +586,7 @@ function extractQuestions(questionsPanel, bestSelector) {
 					content: questionContent,
 				});
 				questionSet.add(questionText);
-				console.log(
-					`成功提取第 ${index + 1} 条问题:`,
-					questionContent,
-					purchaseDate,
-					style
-				);
+				console.log(`成功提取第 ${index + 1} 条问题:`, questionContent);
 			} else {
 				console.log(
 					`跳过无效问题:`,
