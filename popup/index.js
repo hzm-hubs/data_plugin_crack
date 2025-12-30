@@ -988,7 +988,7 @@ function displayTaobaoDetailData(
 	if (item.questions && item.questions.length > 0) {
 		questions = `
       <div class="item-section">
-        <h3>用户评价 (${item.questions.length}条)</h3>
+        <h3>问大家 (${item.questions.length}条)</h3>
         <div class="comments-container">
           ${item.questions
 						.map(
@@ -997,14 +997,7 @@ function displayTaobaoDetailData(
               <div class="comment-header">
                 <div class="comment-user">${question.content}</div>
               </div>
-			  ${question.answerList
-					.map(
-						(ans) => `
-				<div class="comment-content">- ${ans.content}</div>
-			  `
-					)
-					.join("")}
-             
+			  <div class="comment-content">${question.lastAnswer}</div>
             </div>
           `
 						)
@@ -1029,6 +1022,7 @@ function displayTaobaoDetailData(
     </div>
     
     ${commentList}
+	
     
     <div class="item-section">
       <h3>配送信息</h3>
@@ -1127,8 +1121,10 @@ function displayTaobaoDetailData(
     
     ${commentList2}
     
+	${questions}
+
     ${comments}
-    
+
     ${itemDetail}
     
     <!-- 添加图文详情展示 -->
@@ -1187,7 +1183,7 @@ function displayTaobaoDetailData(
 	const itemComments = document.createElement("style");
 	itemComments.textContent = `
     .detail-item { padding: 15px; }
-    .detail-header { display: flex; margin-bottom: 20px; }
+    .detail-header { display: flex; margin-bottom: 20px;}
     .detail-image { width: 200px; margin-right: 20px; }
     .detail-image img { width: 100%; border: 1px solid #eee; }
     .detail-info { flex: 1; }
@@ -1227,7 +1223,7 @@ function displayTaobaoDetailData(
     
     /* 评论样式 */
     .comments-container { max-height: 300px; overflow-y: auto; }
-    .comment-item { border-bottom: 1px solid #f0f0f0; padding: 10px 0; }
+    .comment-item { border-bottom: 1px solid #f0f0f0; padding: 10px 0;gap:4px;}
     .comment-item:last-child { border-bottom: none; }
     .comment-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
     .comment-user { font-weight: bold; color: #333; }
