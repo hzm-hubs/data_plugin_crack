@@ -1223,12 +1223,10 @@ function displayTaobaoDetailData(
     
     /* 评论样式 */
     .comments-container { max-height: 300px; overflow-y: auto; }
-    .comment-item { border-bottom: 1px solid #f0f0f0; padding: 10px 0;gap:4px;}
+    .comment-item { border-bottom: 1px solid #f0f0f0; padding: 10px 0;}
     .comment-item:last-child { border-bottom: none; }
-    .comment-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .comment-header { display: flex; align-items: center; margin-bottom: 8px; gap:10px;}
     .comment-user { font-weight: bold; color: #333; }
-    .comment-meta { color: #999; font-size: 12px; }
-    .comment-date { margin-right: 10px; }
     .comment-spec { color: #666; }
     .comment-content { line-height: 1.5; color: #333; }
   `;
