@@ -44,13 +44,13 @@ const fieldsForm = [
 			{ key: "tbAskNum", label: "最大问大家数", default: 50 },
 		],
 	},
-	{
-		groupName: "京东设置",
-		keys: [
-			{ key: "jdSearchListNum", label: "搜索列表数", default: 100 },
-			{ key: "jdCommentNum", label: "最大评论数", default: 100 },
-		],
-	},
+	// {
+	// 	groupName: "京东设置",
+	// 	keys: [
+	// 		{ key: "jdSearchListNum", label: "搜索列表数", default: 100 },
+	// 		{ key: "jdCommentNum", label: "最大评论数", default: 100 },
+	// 	],
+	// },
 	{
 		groupName: "小红书设置",
 		keys: [

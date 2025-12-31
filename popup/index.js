@@ -2,8 +2,9 @@ const mainfest = chrome.runtime.getManifest();
 
 document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	// 配置信息
+	console.log("生成默认设置项");
 	const appInfo = generateAppInfo();
-	console.log("默认设置项", appInfo);
+	console.log("根据历史数据进行赋值");
 	fetchAppInfo();
 	let dataArray = [];
 	dataType = "";
@@ -27,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	// 初始化表单
 	function initFieldsForm(fieldsForm) {
 		const fatherELe = document.getElementById("dataForm");
-		console.log("生成设置页面表单", fatherELe);
 		if (fatherELe) {
 			console.log("生成设置页面表单");
 			const childList = [];
@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	function setInitValue(targetId, value) {
 		document.getElementById(targetId).value = value;
 	}
+
 	function fetchAppInfo() {
 		chrome.storage.local.get("appInfo", function (result) {
 			if (chrome.runtime.lastError) {
@@ -120,6 +121,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		targetEle[type] = text;
 	}
 	function handleChange(key, value) {
+		if (value === null || value === undefined) {
+			// 恢复原值
+			setInitValue(key, appInfo[key]);
+			return;
+		}
 		appInfo[key] = value;
 		chrome.storage.local.set({
 			appInfo,
@@ -142,7 +148,6 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		if (!appId && !feishuLink && !appKey && !dingdingLink) {
 			return setStatusContent("请填写飞书、钉钉设置");
 		}
-
 		changeDisplay("controls", "remove");
 		changeDisplay("result", "remove");
 		setStatusContent("欢迎使用！");
@@ -462,6 +467,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 					let domainName = domain;
 					const storageKey = "data_" + btoa(tabUrl);
 					chrome.storage.local.get([storageKey], function (result) {
+						if (!appInfo.feishuLink) {
+							alert("请先在设置中配置多维表格URL");
+							changeDisplay("settingsPanel", "remove");
+							return;
+						}
 						if (result[storageKey] && result[storageKey].fetchTime) {
 							fetchTime = result[storageKey].fetchTime;
 						} else {
@@ -474,51 +484,8 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 							fetchTime: fetchTime,
 							url: tabUrl,
 						};
-						if (!appInfo.feishuLink || !appInfo.dingdingLink) {
-							alert("请先在设置中配置多维表格URL");
-							changeDisplay("settingsPanel", "remove");
-							return;
-						}
 						setStatusContent("正在导出数据到多维表格...");
-						const workflowPayload = {
-							parameters: {
-								input: {
-									data: exportData,
-									app_id: appInfo.appId,
-									documentLink: appInfo.documentLink,
-									version: mainfest.version,
-								},
-							},
-							workflow_id: "7505701175690477579",
-						};
-						fetch("https://api.coze.cn/v1/workflow/run", {
-							method: "POST",
-							headers: {
-								Authorization: `Bearer ${appInfo.cozeToken}`,
-								"Content-Type": "application/json",
-							},
-							body: JSON.stringify(workflowPayload),
-						})
-							.then((response) => {
-								return response.json();
-							})
-							.then((backData) => {
-								console.log("工作流API详细响应:", JSON.stringify(backData));
-								if (backData.code !== 0) {
-									if (backData.code == "4100") {
-										setStatusContent("授权码失效或格式有误");
-									} else {
-										setStatusContent(backData.msg);
-									}
-									return;
-								}
-								backData = JSON.parse(backData.data);
-								setStatusContent(backData.msg);
-							})
-							.catch((error) => {
-								console.error("调用工作流API失败:", error);
-								setStatusContent("导出失败，请检查网络连接");
-							});
+						uploadData(exportData);
 					});
 				}
 			);
@@ -526,6 +493,91 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			alert("没有可导出的数据");
 		}
 	});
+
+	document
+		.getElementById("exportBtnDing")
+		.addEventListener("click", function () {
+			if (dataArray) {
+				chrome.tabs.query(
+					{
+						active: true,
+						currentWindow: true,
+					},
+					function (tabs, fetchTime) {
+						const tabUrl = tabs[0].url;
+						let domainName = domain;
+						const storageKey = "data_" + btoa(tabUrl);
+						chrome.storage.local.get([storageKey], function (result) {
+							if (!appInfo.dingdingLink) {
+								alert("请先在设置中配置多维表格URL");
+								changeDisplay("settingsPanel", "remove");
+								return;
+							}
+							if (result[storageKey] && result[storageKey].fetchTime) {
+								fetchTime = result[storageKey].fetchTime;
+							} else {
+								fetchTime = new Date().toLocaleString();
+							}
+							let exportData = {
+								domain: domainName,
+								type: dataType,
+								data: dataArray,
+								fetchTime: fetchTime,
+								url: tabUrl,
+							};
+							setStatusContent("正在导出数据到多维表格...");
+							uploadData(exportData, "dingding");
+						});
+					}
+				);
+			} else {
+				alert("没有可导出的数据");
+			}
+		});
+
+	function uploadData(exportData, channel = "feishu") {
+		const workflowPayload = {
+			parameters: {
+				input: {
+					data: exportData,
+					app_id: channel == "feishu" ? appInfo.appId : appInfo.appKey,
+					documentLink:
+						channel == "feishu" ? appInfo.documentLink : appInfo.dingdingLink,
+					version: mainfest.version,
+				},
+			},
+			workflow_id: "7505701175690477579",
+		};
+		fetch("https://api.coze.cn/v1/workflow/run", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${appInfo.cozeToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(workflowPayload),
+		})
+			.then((response) => {
+				return response.json();
+			})
+			.then((backData) => {
+				console.log("工作流API详细响应:", JSON.stringify(backData));
+				if (backData.code !== 0) {
+					if (backData.code == "4100") {
+						setStatusContent("授权码失效或格式有误");
+					} else {
+						setStatusContent(backData.msg);
+					}
+					return;
+				}
+				backData = JSON.parse(backData.data);
+				setStatusContent(backData.msg);
+			})
+			.catch((error) => {
+				console.error("调用工作流API失败:", error);
+				setStatusContent("导出失败，请检查网络连接");
+			});
+	}
+
 	const splitString = (data, targetString) => {
 		try {
 			return data.split(targetString)[1].split("\n")[0];
@@ -533,6 +585,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			return data;
 		}
 	};
+
 	document.getElementById("exportExcel").addEventListener("click", function () {
 		if (dataArray) {
 			setStatusContent("开始整理数据……");
@@ -667,6 +720,9 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			} else {
 				statusElement.innerHTML = message.status;
 			}
+			return true;
+		} else if (message.action === "getAppInfo") {
+			sendResponse(appInfo);
 			return true;
 		}
 	});
@@ -1220,15 +1276,6 @@ function displayTaobaoDetailData(
     .sku-option-text { flex: 1; }
     .sku-option-status { font-size: 12px; color: #ff4400; margin-left: 5px; }
     .sku-stock-status { color: #009900; font-size: 13px; margin-top: 5px; }
-    
-    /* 评论样式 */
-    .comments-container { max-height: 300px; overflow-y: auto; }
-    .comment-item { border-bottom: 1px solid #f0f0f0; padding: 10px 0;}
-    .comment-item:last-child { border-bottom: none; }
-    .comment-header { display: flex; align-items: center; margin-bottom: 8px; gap:10px;}
-    .comment-user { font-weight: bold; color: #333; }
-    .comment-spec { color: #666; }
-    .comment-content { line-height: 1.5; color: #333; }
   `;
 	document.head.appendChild(itemComments);
 }
@@ -2281,7 +2328,7 @@ function displayXiaohongshuNoteData(data) {
 		commentsList.className = "comments-list";
 		data.commentsList.forEach((comment) => {
 			const commentDiv = document.createElement("div");
-			commentDiv.className = "comment-item";
+			commentDiv.className = "comment-item-flex";
 			commentDiv.innerHTML = `
                 <img class="comment-avatar" src="${
 									comment.avatar || ""

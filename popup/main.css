@@ -82,4 +82,5 @@
   line-height: 0;
   overflow: hidden;
   transition: padding-top 0.3s;
+  border: none !important;
 }

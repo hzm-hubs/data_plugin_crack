@@ -1,10 +1,13 @@
 async function scrapeComments(maxComments) {
+	const appInfo = await chrome.runtime.sendMessage({
+		action: "getAppInfo",
+	});
 	console.log("开始抓取评论");
 	chrome.runtime.sendMessage({
 		action: "updateStatus",
 		status: "正在抓取评论...",
 	});
-	maxComments = 100;
+	maxComments = appInfo?.tbCommentNum || 100;
 	try {
 		console.log(
 			"初始HTML状态:",
@@ -504,12 +507,12 @@ function loadAllComments(commentsPanel, maxComments = 100) {
 		}
 		const maxScrollAttempts =
 			maxComments > 1000
-				? 1000
+				? 200
 				: maxComments > 100
-				? 500
+				? 20
 				: maxComments < 10
-				? 50
-				: 100;
+				? 5
+				: 20;
 		console.log(`设置最大滚动尝试次数: ${maxScrollAttempts}`);
 		let commentCount = 0;
 		let scrollFailures = 0;

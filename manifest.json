@@ -13,7 +13,8 @@
 		"scripting",
 		"storage",
 		"webRequest",
-		"webRequestBlocking"
+		"webRequestBlocking",
+		"notifications"
 	],
 	"host_permissions": [
 		"https://s.taobao.com/search*",

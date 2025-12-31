@@ -316,8 +316,12 @@ function waitForElement(selector, timeout = 5000) {
 		}, timeout);
 	});
 }
-async function scrapeNoteComments(maxComments = 100) {
-	console.log("开始抓取小红书笔记评论数据...");
+async function scrapeNoteComments(maxComments) {
+	const appInfo = await chrome.runtime.sendMessage({
+		action: "getAppInfo",
+	});
+	maxComments = appInfo?.xhsCommentNum || 100;
+	console.log("开始抓取小红书笔记评论数据...,目标评论数:", maxComments);
 	const comments = [];
 	const commentIds = new Set();
 	try {

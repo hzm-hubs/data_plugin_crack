@@ -1,10 +1,13 @@
 async function scrapeQuestions(maxQuestions) {
+	const appInfo = await chrome.runtime.sendMessage({
+		action: "getAppInfo",
+	});
 	console.log("开始抓取问题");
 	chrome.runtime.sendMessage({
 		action: "updateStatus",
 		status: "正在抓取问题...",
 	});
-	maxQuestions = 100;
+	maxQuestions = appInfo.tbCommentNum || 100;
 	try {
 		console.log("尝试获取问题总数");
 		let questionCount = maxQuestions;
@@ -324,12 +327,12 @@ function loadAllQuestions(questionsPanel, maxQuestions = 100) {
 		}
 		const maxScrollAttempts =
 			maxQuestions > 1000
-				? 1000
+				? 200
 				: maxQuestions > 100
-				? 500
+				? 20
 				: maxQuestions < 10
-				? 50
-				: 100;
+				? 5
+				: 20;
 		console.log(`设置最大滚动尝试次数: ${maxScrollAttempts}`);
 		let questionCount = 0;
 		let scrollFailures = 0;
