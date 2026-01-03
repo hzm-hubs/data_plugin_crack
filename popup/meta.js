@@ -39,7 +39,7 @@ const fieldsForm = [
 	{
 		groupName: "淘宝设置",
 		keys: [
-			{ key: "tbSearchListNum", label: "搜索列表数", default: 100 },
+			{ key: "tbSearchListNum", label: "搜索列表数", default: 50 },
 			{ key: "tbCommentNum", label: "最大评论数", default: 100 },
 			{ key: "tbAskNum", label: "最大问大家数", default: 50 },
 		],
@@ -47,14 +47,14 @@ const fieldsForm = [
 	// {
 	// 	groupName: "京东设置",
 	// 	keys: [
-	// 		{ key: "jdSearchListNum", label: "搜索列表数", default: 100 },
+	// 		{ key: "jdSearchListNum", label: "搜索列表数", default: 50 },
 	// 		{ key: "jdCommentNum", label: "最大评论数", default: 100 },
 	// 	],
 	// },
 	{
 		groupName: "小红书设置",
 		keys: [
-			{ key: "xhsSearchListNum", label: "搜索列表数", default: 100 },
+			{ key: "xhsSearchListNum", label: "搜索列表数", default: 50 },
 			{ key: "xhsCommentNum", label: "最大评论数", default: 100 },
 			{ key: "xhsAskNum", label: "最大用户笔记数", default: 100 },
 		],
@@ -62,7 +62,7 @@ const fieldsForm = [
 	{
 		groupName: "抖音设置",
 		keys: [
-			{ key: "dySearchListNum", label: "搜索列表数", default: 100 },
+			{ key: "dySearchListNum", label: "搜索列表数", default: 50 },
 			{ key: "dyCommentNum", label: "最大评论数", default: 100 },
 			{ key: "dyVideoNum", label: "最大用户视频数", default: 100 },
 		],

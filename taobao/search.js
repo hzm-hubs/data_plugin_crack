@@ -1,17 +1,64 @@
 async function scrapeTaobaoSearchData() {
+	const appInfo = await chrome.runtime.sendMessage({
+		action: "getAppInfo",
+	});
 	console.log("准备抓取淘宝搜索页数据...");
+	const products = [];
+	let isFirst = true;
+	let tryTimes = 10;
+	while (products.length < appInfo.tbSearchListNum && tryTimes > 0) {
+		if (!isFirst) {
+			chrome.runtime.sendMessage({
+				action: "updateStatus",
+				status: "正在加载下一页数据，请稍候...",
+			});
+			getPagination()?.click();
+			await new Promise((resolve) => setTimeout(resolve, 5000));
+		}
+		const currentData = await scrapeCurrentPage(
+			appInfo.tbSearchListNum - products.length
+		);
+		if (!currentData?.length) {
+			tryTimes -= 1;
+		}
+		products.push(...currentData);
+		console.log("当前已抓取总数:", products);
+		if (isFirst) {
+			isFirst = false;
+		}
+	}
+	return products;
+}
+
+function getPagination(targetEle = "下一页") {
+	const paginationElement = document.querySelectorAll(".next-pagination-item");
+	const targetElement = Array.from(paginationElement).find((el) =>
+		el.textContent.includes(targetEle)
+	);
+	return targetElement;
+}
+
+async function scrapeCurrentPage(diffNum = 100) {
+	const result = [];
 	await scrollTaobaoSearchPage();
 	await new Promise((resolve) => setTimeout(resolve, 1000));
 	const searchContainer = document.querySelector(".content--CUnfXXxv");
 	if (!searchContainer) {
 		console.error("找不到商品列表容器");
-		return [];
+		return result;
 	}
-	const productList = searchContainer.querySelectorAll(
-		"div.tbpc-col.search-content-col"
-	);
-	const products = [];
-	productList.forEach((item) => {
+
+	let productList =
+		Array.from(
+			searchContainer.querySelectorAll("div.tbpc-col.search-content-col")
+		) || [];
+	console.log("找到商品列表数量:", productList.length);
+	const currentNum = Math.min(productList.length, diffNum);
+	for (let i = 0; i < productList.length; i++) {
+		if (result.length >= currentNum) {
+			break;
+		}
+		const item = productList[i];
 		const titleElement = item.querySelector(".title--ASSt27UY span");
 		const title = titleElement ? titleElement.innerText.trim() : "";
 		const priceInt = item.querySelector(".priceInt--yqqZMJ5a");
@@ -35,7 +82,7 @@ async function scrapeTaobaoSearchData() {
 		const salesInfo = item.querySelector(".realSales--XZJiepmt");
 		const salesInfo2 = salesInfo ? salesInfo.innerText.trim() : "";
 		if (title || priceString) {
-			products.push({
+			result.push({
 				title: title,
 				price: priceString,
 				image: imageSrc,
@@ -43,10 +90,11 @@ async function scrapeTaobaoSearchData() {
 				sales: salesInfo2,
 			});
 		}
-	});
-	console.log("抓取到搜索页数据:", products.length, "条");
-	return products;
+	}
+	console.log("本次抓取到搜索页数据:", result.length, "条");
+	return result;
 }
+
 async function scrollTaobaoSearchPage() {
 	console.log("开始滚动淘宝搜索页面以加载所有商品...");
 	chrome.runtime.sendMessage({

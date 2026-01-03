@@ -7,7 +7,7 @@ async function scrapeQuestions(maxQuestions) {
 		action: "updateStatus",
 		status: "正在抓取问题...",
 	});
-	maxQuestions = appInfo.tbCommentNum || 100;
+	maxQuestions = appInfo.tbAskNum || 100;
 	try {
 		console.log("尝试获取问题总数");
 		let questionCount = maxQuestions;
