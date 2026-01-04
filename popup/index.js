@@ -120,13 +120,20 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		const targetEle = document.getElementById("status");
 		targetEle[type] = text;
 	}
+
 	function handleChange(key, value) {
-		if (value === null || value === undefined) {
-			// 恢复原值
+		if (
+			value === null ||
+			value === undefined ||
+			!value ||
+			(key.includes("Num") && isNaN(value))
+		) {
+			// 异常输入使用原值
 			setInitValue(key, appInfo[key]);
 			return;
 		}
-		appInfo[key] = value;
+		const tempValue = isNaN(value) ? value : Number(value);
+		appInfo[key] = tempValue;
 		chrome.storage.local.set({
 			appInfo,
 		});

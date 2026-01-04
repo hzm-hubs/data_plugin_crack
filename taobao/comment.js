@@ -31,15 +31,17 @@ async function scrapeComments(maxComments) {
 				console.log(`提取括号内容: "${commentCount11}"`);
 				if (commentCount11.includes("万")) {
 					console.log(
-						`检测到"万"字，评论数量肯定超过100，使用最大值 ${maxComments}`
+						`检测到"万"字，评论数量肯定超过${maxComments}，使用最大值 ${maxComments}`
 					);
 					return maxComments;
 				}
 				const num = parseInt(commentCount11, 10);
 				if (!isNaN(num)) {
 					console.log(`解析为数字: ${num}`);
-					if (num >= 100) {
-						console.log(`评论数量 ${num} >= 100，使用最大值 ${maxComments}`);
+					if (num >= maxComments) {
+						console.log(
+							`评论数量 ${num} >= ${maxComments}，使用最大值 ${maxComments}`
+						);
 						return maxComments;
 					}
 					return num;
@@ -54,8 +56,10 @@ async function scrapeComments(maxComments) {
 			const num = parseInt(text, 10);
 			if (!isNaN(num)) {
 				console.log(`直接解析为数字: ${num}`);
-				if (num >= 100) {
-					console.log(`评论数量 ${num} >= 100，使用最大值 ${maxComments}`);
+				if (num >= maxComments) {
+					console.log(
+						`评论数量 ${num} >= ${maxComments}，使用最大值 ${maxComments}`
+					);
 					return maxComments;
 				}
 				return num;

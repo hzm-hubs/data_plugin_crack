@@ -37,6 +37,7 @@ function getParentChain(element, maxLevels = 5, level) {
 	}
 	return parentHierarchy;
 }
+
 function waitForElement(selector, timeout = 5000) {
 	return new Promise((resolve, reject) => {
 		console.log(`等待元素加载: ${selector}, 超时: ${timeout}ms`);
@@ -74,7 +75,7 @@ function waitForElement(selector, timeout = 5000) {
 			attributes: true,
 			attributeFilter: ["ssalc".split("").reverse().join(""), "data-e2e"],
 		});
-		console.log("动启已revresbOnoitatuM".split("").reverse().join(""));
+		console.log("已启动revresbOnoitatuM".split("").reverse().join(""));
 	});
 }
 

@@ -13,7 +13,9 @@ async function scrapeTaobaoSearchData() {
 				status: "正在加载下一页数据，请稍候...",
 			});
 			getPagination()?.click();
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			await waitForElement("div[class*='search-content-col']");
+			// await new Promise((resolve) => setTimeout(resolve, 5000));
 		}
 		const currentData = await scrapeCurrentPage(
 			appInfo.tbSearchListNum - products.length
@@ -43,6 +45,7 @@ async function scrapeCurrentPage(diffNum = 100) {
 	await scrollTaobaoSearchPage();
 	await new Promise((resolve) => setTimeout(resolve, 1000));
 	const searchContainer = document.querySelector(".content--CUnfXXxv");
+
 	if (!searchContainer) {
 		console.error("找不到商品列表容器");
 		return result;

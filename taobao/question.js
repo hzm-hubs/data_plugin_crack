@@ -1,4 +1,4 @@
-async function scrapeQuestions(maxQuestions) {
+async function scrapeQuestions(maxAskNum) {
 	const appInfo = await chrome.runtime.sendMessage({
 		action: "getAppInfo",
 	});
@@ -7,10 +7,10 @@ async function scrapeQuestions(maxQuestions) {
 		action: "updateStatus",
 		status: "正在抓取问题...",
 	});
-	maxQuestions = appInfo.tbAskNum || 100;
+	maxAskNum = appInfo.tbAskNum || 100;
 	try {
 		console.log("尝试获取问题总数");
-		let questionCount = maxQuestions;
+		let questionCount = maxAskNum;
 		const selectors = ['[class*="askAnswerTitle--"]'];
 		function parseCommentCount1(text) {
 			console.log(`解析问题数量文本: "${text}"`);
@@ -21,37 +21,39 @@ async function scrapeQuestions(maxQuestions) {
 				console.log(`提取括号内容: "${questionCount11}"`);
 				if (questionCount11.includes("万")) {
 					console.log(
-						`检测到"万"字，问题数量肯定超过100，使用最大值 ${maxQuestions}`
+						`检测到"万"字，问题数量肯定超过${maxAskNum}，使用最大值 ${maxAskNum}`
 					);
-					return maxQuestions;
+					return maxAskNum;
 				}
 				const num = parseInt(questionCount11, 10);
 				if (!isNaN(num)) {
 					console.log(`解析为数字: ${num}`);
-					if (num >= 100) {
-						console.log(`问题数量 ${num} >= 100，使用最大值 ${maxQuestions}`);
-						return maxQuestions;
+					if (num >= maxAskNum) {
+						console.log(
+							`问题数量 ${num} >= ${maxAskNum}，使用最大值 ${maxAskNum}`
+						);
+						return maxAskNum;
 					}
 					return num;
 				}
 				if (questionCount11.includes("+")) {
-					console.log(
-						`检测到"+"号，问题数量可能很大，使用最大值 ${maxQuestions}`
-					);
-					return maxQuestions;
+					console.log(`检测到"+"号，问题数量可能很大，使用最大值 ${maxAskNum}`);
+					return maxAskNum;
 				}
 			}
 			const num = parseInt(text, 10);
 			if (!isNaN(num)) {
 				console.log(`直接解析为数字: ${num}`);
-				if (num >= 100) {
-					console.log(`问题数量 ${num} >= 100，使用最大值 ${maxQuestions}`);
-					return maxQuestions;
+				if (num >= maxAskNum) {
+					console.log(
+						`问题数量 ${num} >= ${maxAskNum}，使用最大值 ${maxAskNum}`
+					);
+					return maxAskNum;
 				}
 				return num;
 			}
-			console.log(`无法解析问题数量，使用默认最大值: ${maxQuestions}`);
-			return maxQuestions;
+			console.log(`无法解析问题数量，使用默认最大值: ${maxAskNum}`);
+			return maxAskNum;
 		}
 		for (const selector of selectors) {
 			try {
@@ -89,12 +91,12 @@ async function scrapeQuestions(maxQuestions) {
 			}
 		}
 		if (isNaN(questionCount) || questionCount <= 0) {
-			questionCount = maxQuestions;
-			console.log(`未找到有效的问题总数，使用默认值: ${maxQuestions}`);
+			questionCount = maxAskNum;
+			console.log(`未找到有效的问题总数，使用默认值: ${maxAskNum}`);
 		} else {
 			console.log(`使用实际问题总数: ${questionCount}`);
 		}
-		const minQuestions = Math.min(questionCount, maxQuestions);
+		const minQuestions = Math.min(questionCount, maxAskNum);
 		console.log(`期望获取的问题数量: ${minQuestions}`);
 
 		console.log('尝试点击"全部问答"按钮');
@@ -317,22 +319,16 @@ function closeQuestionOverlay() {
 	}
 }
 
-function loadAllQuestions(questionsPanel, maxQuestions = 100) {
+function loadAllQuestions(questionsPanel, maxAskNum = 100) {
 	return new Promise(async (resolve) => {
-		console.log(`开始加载问题，最大数量: ${maxQuestions}`);
+		console.log(`开始加载问题，最大数量: ${maxAskNum}`);
 		if (!questionsPanel) {
 			console.log("问题面板不存在，无法加载问题");
 			resolve(0);
 			return;
 		}
 		const maxScrollAttempts =
-			maxQuestions > 1000
-				? 200
-				: maxQuestions > 100
-				? 20
-				: maxQuestions < 10
-				? 5
-				: 20;
+			maxAskNum > 1000 ? 200 : maxAskNum > 100 ? 20 : maxAskNum < 10 ? 5 : 20;
 		console.log(`设置最大滚动尝试次数: ${maxScrollAttempts}`);
 		let questionCount = 0;
 		let scrollFailures = 0;
@@ -356,7 +352,7 @@ function loadAllQuestions(questionsPanel, maxQuestions = 100) {
 			const questions = getQuestions();
 			const questionCount1 = questions.length;
 			console.log(
-				`滚动尝试 #${attempt}: 当前问题数量 ${questionCount1}/${maxQuestions}`
+				`滚动尝试 #${attempt}: 当前问题数量 ${questionCount1}/${maxAskNum}`
 			);
 			const hasNewQuestions = questionCount1 > questionCount;
 			if (!hasNewQuestions && attempt > 10) {
@@ -367,12 +363,12 @@ function loadAllQuestions(questionsPanel, maxQuestions = 100) {
 			}
 			questionCount = questionCount1;
 			if (
-				questionCount1 >= maxQuestions ||
+				questionCount1 >= maxAskNum ||
 				attempt >= maxScrollAttempts ||
 				(scrollFailures >= maxFails && attempt > 50)
 			) {
-				if (questionCount1 >= maxQuestions) {
-					console.log(`已达到目标问题数量: ${questionCount1}/${maxQuestions}`);
+				if (questionCount1 >= maxAskNum) {
+					console.log(`已达到目标问题数量: ${questionCount1}/${maxAskNum}`);
 				} else {
 					if (attempt >= maxScrollAttempts) {
 						console.log(
@@ -382,7 +378,7 @@ function loadAllQuestions(questionsPanel, maxQuestions = 100) {
 						console.log(`连续 ${scrollFailures} 次没有新问题，停止滚动`);
 					}
 				}
-				console.log(`最终问题数量: ${questionCount1}/${maxQuestions}`);
+				console.log(`最终问题数量: ${questionCount1}/${maxAskNum}`);
 				resolve(questionCount1);
 				return;
 			}

@@ -56,7 +56,7 @@ const fieldsForm = [
 		keys: [
 			{ key: "xhsSearchListNum", label: "搜索列表数", default: 50 },
 			{ key: "xhsCommentNum", label: "最大评论数", default: 100 },
-			{ key: "xhsAskNum", label: "最大用户笔记数", default: 100 },
+			{ key: "xhsUserNoteNum", label: "最大用户笔记数", default: 100 },
 		],
 	},
 	{
