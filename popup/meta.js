@@ -23,7 +23,7 @@ const fieldsForm = [
 		groupName: "钉钉设置",
 		keys: [
 			{
-				key: "dingdingAppKey",
+				key: "appKey",
 				label: "appKey",
 				default: "",
 				placeholder: "请填写",

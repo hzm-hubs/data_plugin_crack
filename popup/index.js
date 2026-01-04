@@ -125,14 +125,13 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		if (
 			value === null ||
 			value === undefined ||
-			!value ||
 			(key.includes("Num") && isNaN(value))
 		) {
 			// 异常输入使用原值
 			setInitValue(key, appInfo[key]);
 			return;
 		}
-		const tempValue = isNaN(value) ? value : Number(value);
+		const tempValue = !value ?? isNaN(value) ? value : Number(value);
 		appInfo[key] = tempValue;
 		chrome.storage.local.set({
 			appInfo,
@@ -145,7 +144,8 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	function saveSettings() {
 		const cozeToken = document.getElementById("cozeToken").value.trim();
 		if (!cozeToken) {
-			return setStatusContent("请填写授权码");
+			setStatusContent("请填写授权码");
+			return;
 		}
 		const appId = document.getElementById("appId").value.trim();
 		const feishuLink = document.getElementById("feishuLink").value.trim();
@@ -153,7 +153,8 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		const dingdingLink = document.getElementById("dingdingLink").value.trim();
 
 		if (!appId && !feishuLink && !appKey && !dingdingLink) {
-			return setStatusContent("请填写飞书、钉钉设置");
+			setStatusContent("请填写飞书、钉钉设置");
+			return;
 		}
 		changeDisplay("controls", "remove");
 		changeDisplay("result", "remove");
@@ -474,8 +475,18 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 					let domainName = domain;
 					const storageKey = "data_" + btoa(tabUrl);
 					chrome.storage.local.get([storageKey], function (result) {
+						if (!appInfo.cozeToken) {
+							setStatusContent("请填写授权码");
+							changeDisplay("settingsPanel", "remove");
+							return;
+						}
+						if (!appInfo.appId) {
+							alert("请先在设置中配置飞书appId");
+							changeDisplay("settingsPanel", "remove");
+							return;
+						}
 						if (!appInfo.feishuLink) {
-							alert("请先在设置中配置多维表格URL");
+							alert("请先在设置中配置飞书多维表格URL");
 							changeDisplay("settingsPanel", "remove");
 							return;
 						}
@@ -515,8 +526,18 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 						let domainName = domain;
 						const storageKey = "data_" + btoa(tabUrl);
 						chrome.storage.local.get([storageKey], function (result) {
+							if (!appInfo.cozeToken) {
+								setStatusContent("请填写授权码");
+								changeDisplay("settingsPanel", "remove");
+								return;
+							}
+							if (!appInfo.appKey) {
+								alert("请先在设置中配置钉钉appKey");
+								changeDisplay("settingsPanel", "remove");
+								return;
+							}
 							if (!appInfo.dingdingLink) {
-								alert("请先在设置中配置多维表格URL");
+								alert("请先在设置中配置钉钉AI表格URL");
 								changeDisplay("settingsPanel", "remove");
 								return;
 							}
