@@ -28,7 +28,8 @@
 		"https://www.xiaohongshu.com/search*",
 		"https://www.xiaohongshu.com/explore*",
 		"https://www.xiaohongshu.com/user/profile/*",
-		"https://one.alimama.com/index.html?*"
+		"https://one.alimama.com/index.html?*",
+		"https://sycm.taobao.com/mc/free/search*"
 	],
 	"content_scripts": [
 		{
@@ -94,6 +95,16 @@
 				"common/domainHelper.js",
 				"common/utils.js",
 				"one/onesite.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://sycm.taobao.com/mc/free/search*"],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"sycm/market.js",
 				"content.js"
 			],
 			"run_at": "document_end"
