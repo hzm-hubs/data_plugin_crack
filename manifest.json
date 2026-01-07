@@ -100,11 +100,21 @@
 			"run_at": "document_end"
 		},
 		{
-			"matches": ["https://sycm.taobao.com/mc/free/search*"],
+			"matches": ["https://sycm.taobao.com/mc/free/search_rank*"],
 			"js": [
 				"common/domainHelper.js",
 				"common/utils.js",
-				"sycm/market.js",
+				"sycm/rank.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://sycm.taobao.com/mc/free/search_analysis*"],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"sycm/analysis.js",
 				"content.js"
 			],
 			"run_at": "document_end"
