@@ -104,6 +104,12 @@ const relatedColumn = [
 	},
 ];
 
+function formatNumberRange(text) {
+	// 匹配模式：数字范围 ~ 数字范围 \n 百分比
+	// "2500 ~ 5000\n10%"; => "2500 ~ 5000(10%)"
+	return text.replace(/(\d+)\s*~\s*(\d+)\s*\n\s*(\d+%)/g, "$1 ~ $2($3)");
+}
+
 async function getPageData(result) {
 	lastTableContent = JSON.stringify(getTargetTable("tbody")?.innerHTML);
 	let trList = Array.from(getTargetTable("tbody").getElementsByTagName("tr")); // .slice(0,20)
@@ -117,7 +123,11 @@ async function getPageData(result) {
 		});
 		const curTr = {};
 		for (let j = 0; j < relatedColumn.length; j++) {
-			curTr[relatedColumn[j].prop] = trInfo[j] || "";
+			const result = trInfo[j].split("\n");
+			curTr[relatedColumn[j].prop] = result[0] || "";
+			if (result[1]) {
+				curTr[`${relatedColumn[j].prop}Increase`] = result[1];
+			}
 		}
 		result.push(curTr);
 	}
