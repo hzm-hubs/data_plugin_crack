@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			setInitValue(key, appInfo[key]);
 			return;
 		}
-		const tempValue = !value ?? isNaN(value) ? value : Number(value);
+		const tempValue = !value || isNaN(value) ? value : Number(value);
 		appInfo[key] = tempValue;
 		chrome.storage.local.set({
 			appInfo,
