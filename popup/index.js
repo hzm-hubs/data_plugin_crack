@@ -576,7 +576,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 					data: exportData,
 					app_id: channel == "feishu" ? appInfo.appId : appInfo.appKey,
 					documentLink:
-						channel == "feishu" ? appInfo.documentLink : appInfo.dingdingLink,
+						channel == "feishu" ? appInfo.feishuLink : appInfo.dingdingLink,
 					version: mainfest.version,
 				},
 			},

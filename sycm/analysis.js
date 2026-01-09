@@ -40,10 +40,14 @@ function getTargetTable(node = "thead") {
 // 判断是否还有可以获取的内容
 let lastTableContent = "";
 async function scrapePages(relatedList, maxPageNum = 5) {
+	const appInfo = await chrome.runtime.sendMessage({
+		action: "getAppInfo",
+	});
 	const pageSelector = document.querySelector(".ant-pagination");
 	if (!pageSelector) {
 		return;
 	}
+	maxPageNum = Math.min(maxPageNum, appInfo.sycmAnalysisNum);
 	const nextPageButton = pageSelector.querySelector("li.ant-pagination-next");
 	// const pagesNode = pageSelector.querySelectorAll("li.ant-pagination-item");
 	let activePageNode = pageSelector.querySelector(
