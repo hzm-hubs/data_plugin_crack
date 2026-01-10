@@ -147,13 +147,13 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			setStatusContent("请填写授权码");
 			return;
 		}
-		const appId = document.getElementById("appId").value.trim();
-		const feishuLink = document.getElementById("feishuLink").value.trim();
+		// const appId = document.getElementById("appId").value.trim();
+		// const feishuLink = document.getElementById("feishuLink").value.trim();
 		const appKey = document.getElementById("appKey").value.trim();
 		const dingdingLink = document.getElementById("dingdingLink").value.trim();
 
-		if (!appId && !feishuLink && !appKey && !dingdingLink) {
-			setStatusContent("请填写飞书、钉钉设置");
+		if (!appKey && !dingdingLink) {
+			setStatusContent("请填写钉钉设置");
 			return;
 		}
 		changeDisplay("controls", "remove");
