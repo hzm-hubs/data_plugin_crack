@@ -1,5 +1,7 @@
 console.log("meta.js loaded");
 
+const unLoginFields = ["授权设置", "飞书设置", "钉钉设置"];
+
 const fieldsForm = [
 	{
 		groupName: "授权设置",

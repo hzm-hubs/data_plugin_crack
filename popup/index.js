@@ -1,16 +1,15 @@
 const mainfest = chrome.runtime.getManifest();
-
 document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	// 配置信息
 	console.log("生成默认设置项");
-	const appInfo = generateAppInfo();
+	const appInfo = generateAppInfo(fieldsForm);
 	console.log("根据历史数据进行赋值");
 	fetchAppInfo();
 	let dataArray = [];
 	dataType = "";
 	domain = "";
-	initFieldsForm(fieldsForm);
 	let isLogin = false; // 是否登录过
+	initFieldsForm(fieldsForm);
 	chrome.storage.local.get("isLogin", function (result) {
 		if (result.isLogin) {
 			isLogin = JSON.parse(result.isLogin) || false;
@@ -21,18 +20,23 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			setStatusContent("欢迎使用！");
 			changeDisplay("settingBtnRow");
 			changeDisplay("settingsPanel");
+			changeGroupDisplay(".settings-group.hide-element", "remove");
 			fetchCurrentTabData();
 		}
 	});
 
 	// 初始化表单
-	function initFieldsForm(fieldsForm) {
+	function initFieldsForm(data) {
 		const fatherELe = document.getElementById("dataForm");
 		if (fatherELe) {
 			const childList = [];
-			fieldsForm.forEach((group) => {
+			data?.forEach((group) => {
 				const groupDiv = document.createElement("div");
-				groupDiv.className = "settings-group";
+				if (!unLoginFields.includes(group.groupName)) {
+					groupDiv.className = "settings-group hide-element";
+				} else {
+					groupDiv.className = "settings-group";
+				}
 				const groupTitle = document.createElement("div");
 				groupTitle.className = "settings-group-title";
 				groupTitle.textContent = group.groupName;
@@ -58,8 +62,8 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		}
 	}
 
-	function generateAppInfo() {
-		return fieldsForm.reduce((acc, group) => {
+	function generateAppInfo(data) {
+		return data.reduce((acc, group) => {
 			group.keys.forEach((field) => {
 				acc[field.key] = field.default;
 			});
@@ -77,10 +81,12 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			if (chrome.runtime.lastError) {
 				console.log("读取 appInfo 失败", chrome.runtime.lastError);
 			} else {
-				for (let i in appInfo) {
-					if (result.appInfo[i] === undefined) continue;
-					appInfo[i] = result.appInfo[i];
-					setInitValue(i, result.appInfo[i]);
+				if (result.appInfo) {
+					for (let i in appInfo) {
+						if (!Object.hasOwn(result.appInfo, i)) continue;
+						appInfo[i] = result.appInfo[i];
+						setInitValue(i, result.appInfo[i]);
+					}
 				}
 			}
 		});
@@ -91,6 +97,16 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			targetEle.classList.add("hide-element");
 		} else {
 			targetEle.classList.remove("hide-element");
+		}
+	}
+	function changeGroupDisplay(exp = "", type = "add") {
+		const targetEle = document.querySelectorAll(exp);
+		if (type == "add") {
+			Array.from(targetEle).forEach((ele) => ele.classList.add("hide-element"));
+		} else {
+			Array.from(targetEle).forEach((ele) =>
+				ele.classList.remove("hide-element")
+			);
 		}
 	}
 	function addListen(targetId, callBack = null, type = "click") {
@@ -140,18 +156,23 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	Object.keys(appInfo).map((it) =>
 		addListen(it, (e) => handleChange(it, e), "change")
 	);
+
 	function saveSettings() {
 		const cozeToken = document.getElementById("cozeToken").value.trim();
 		if (!cozeToken) {
 			setStatusContent("请填写授权码");
 			return;
 		}
+		// 判断飞书
 		const appId = document.getElementById("appId").value.trim();
 		const feishuLink = document.getElementById("feishuLink").value.trim();
+		const noneFeisu = !appId || !feishuLink;
+		// 判断dingding
 		const appKey = document.getElementById("appKey").value.trim();
 		const dingdingLink = document.getElementById("dingdingLink").value.trim();
+		const noneDingDing = !appKey || !dingdingLink;
 
-		if (!appId && !feishuLink && !appKey && !dingdingLink) {
+		if (noneFeisu && noneDingDing) {
 			setStatusContent("请填写飞书、钉钉设置");
 			return;
 		}
@@ -160,11 +181,13 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		setStatusContent("欢迎使用！");
 		changeDisplay("settingBtnRow");
 		changeDisplay("settingsPanel");
+		changeGroupDisplay(".settings-group.hide-element", "remove");
 		isLogin = true;
 		chrome.storage.local.set({
 			isLogin,
 		});
 	}
+
 	document.getElementById("settingsBtn").addEventListener("click", function () {
 		const triggerEle = document.getElementById("settingsBtn");
 		const targetEle = document.getElementById("settingsPanel");
@@ -176,11 +199,13 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			triggerEle.innerText = "打开设置";
 		}
 	});
+
 	document
 		.getElementById("saveSettingsBtn")
 		.addEventListener("click", function () {
 			saveSettings();
 		});
+
 	function setPageTitle(domain) {
 		console.log("setPageTitle:", domain);
 		const pageTitle = document.getElementById("pageTitle");
@@ -569,7 +594,13 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			}
 		});
 
+	let isLoading = false;
 	function uploadData(exportData, channel = "feishu") {
+		if (isLoading) {
+			alert("正在上传中，请稍后再试");
+			return;
+		}
+		isLoading = true;
 		const workflowPayload = {
 			parameters: {
 				input: {
@@ -609,6 +640,9 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			.catch((error) => {
 				console.error("调用工作流API失败:", error);
 				setStatusContent("导出失败，请检查网络连接");
+			})
+			.finally(() => {
+				isLoading = false;
 			});
 	}
 
@@ -761,6 +795,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		}
 	});
 });
+
 function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 	if (currentDomain === "myseller") {
 		if (dataType === "tableList") {
@@ -919,6 +954,7 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 		}
 	}
 }
+
 function displayMysellerTableData(list) {
 	const resultContainer = document.getElementById("result");
 	resultContainer.innerHTML = "";
