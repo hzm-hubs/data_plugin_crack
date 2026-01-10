@@ -7,18 +7,18 @@ const fieldsForm = [
 			{ key: "cozeToken", label: "授权码", default: "", placeholder: "请填写" },
 		],
 	},
-	{
-		groupName: "飞书设置",
-		keys: [
-			{ key: "appId", label: "appId", default: "", placeholder: "请填写" },
-			{
-				key: "feishuLink",
-				label: "多维表链接",
-				default: "",
-				placeholder: "请填写您的飞书多维表链接",
-			},
-		],
-	},
+	// {
+	// 	groupName: "飞书设置",
+	// 	keys: [
+	// 		{ key: "appId", label: "appId", default: "", placeholder: "请填写" },
+	// 		{
+	// 			key: "feishuLink",
+	// 			label: "多维表链接",
+	// 			default: "",
+	// 			placeholder: "请填写您的飞书多维表链接",
+	// 		},
+	// 	],
+	// },
 	{
 		groupName: "钉钉设置",
 		keys: [

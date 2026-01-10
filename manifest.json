@@ -77,26 +77,6 @@
 				"content.js"
 			],
 			"run_at": "document_end"
-		},
-		{
-			"matches": ["https://myseller.taobao.com/home.htm/alltaopromotion/*"],
-			"js": [
-				"common/domainHelper.js",
-				"common/utils.js",
-				"myseller/alltaopromotion.js",
-				"content.js"
-			],
-			"run_at": "document_end"
-		},
-		{
-			"matches": ["https://one.alimama.com/index.html?*"],
-			"js": [
-				"common/domainHelper.js",
-				"common/utils.js",
-				"one/onesite.js",
-				"content.js"
-			],
-			"run_at": "document_end"
 		}
 	],
 	"action": {
