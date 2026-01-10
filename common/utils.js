@@ -79,6 +79,22 @@ function waitForElement(selector, timeout = 5000) {
 	});
 }
 
+function waitForRenderComplete2(
+	ele = document,
+	targetId = 'div[mxv^="cubeAction,params"]'
+) {
+	return new Promise((resolve) => {
+		let timeCount = 9;
+		const checkExist = setInterval(() => {
+			if (ele.querySelectorAll(targetId)?.[0] || !timeCount) {
+				clearInterval(checkExist);
+				resolve();
+			}
+			--timeCount;
+		}, 500);
+	});
+}
+
 class Uitls {
 	constructor() {}
 	sleep = async (_0x420b36) => {

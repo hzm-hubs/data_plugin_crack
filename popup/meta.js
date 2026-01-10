@@ -67,4 +67,11 @@ const fieldsForm = [
 			{ key: "dyVideoNum", label: "最大用户视频数", default: 100 },
 		],
 	},
+	{
+		groupName: "生意参谋设置",
+		keys: [
+			{ key: "sycmRankNum", label: "搜索关键词页数", default: 5 },
+			{ key: "sycmAnalysisNum", label: "二级搜索页数", default: 5 },
+		],
+	},
 ];

@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	function initFieldsForm(fieldsForm) {
 		const fatherELe = document.getElementById("dataForm");
 		if (fatherELe) {
-			console.log("生成设置页面表单");
 			const childList = [];
 			fieldsForm.forEach((group) => {
 				const groupDiv = document.createElement("div");
@@ -131,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			setInitValue(key, appInfo[key]);
 			return;
 		}
-		const tempValue = !value ?? isNaN(value) ? value : Number(value);
+		const tempValue = !value || isNaN(value) ? value : Number(value);
 		appInfo[key] = tempValue;
 		chrome.storage.local.set({
 			appInfo,
@@ -183,6 +182,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			saveSettings();
 		});
 	function setPageTitle(domain) {
+		console.log("setPageTitle:", domain);
 		const pageTitle = document.getElementById("pageTitle");
 		if (domain === "myseller") {
 			pageTitle.innerText = "千牛数据抓取";
@@ -192,6 +192,10 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			pageTitle.innerText = "万相台数据抓取";
 			changeDisplay("exportBtn");
 			changeDisplay("exportExcel", "remove");
+		} else if (domain === "sycm") {
+			pageTitle.innerText = "生意参谋数据抓取";
+			document.getElementById("exportBtn").style.display = "inline-block";
+			document.getElementById("exportJsonBtn").style.display = "inline-block";
 		} else if (domain === "taobao" || domain === "tmall") {
 			pageTitle.innerText = "淘宝数据抓取";
 			document.getElementById("exportBtn").style.display = "inline-block";
@@ -222,10 +226,12 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			function (tabs) {
 				const tabUrl = tabs[0].url;
 				domain = "other";
-				if (tabUrl.includes("myseller.taobao.com")) {
-					domain = "myseller";
-				} else if (tabUrl.includes("one.alimama.com")) {
+				if (tabUrl.includes("one.alimama.com")) {
 					domain = "one";
+				} else if (tabUrl.includes("sycm.taobao.com")) {
+					domain = "sycm";
+				} else if (tabUrl.includes("myseller.taobao.com")) {
+					domain = "myseller";
 				} else if (tabUrl.includes("taobao.com")) {
 					domain = "taobao";
 				} else {
@@ -758,7 +764,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 	if (currentDomain === "myseller") {
 		if (dataType === "tableList") {
-			displayTableData(scrapedData);
+			displayMysellerTableData(scrapedData);
 			statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
 		} else {
 			console.warn("未知的千牛数据类型:", dataType);
@@ -771,9 +777,26 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 			statusText = "数据格式不支持";
 		}
 	}
-	if (currentDomain === "one") {
+	if (currentDomain === "sycm") {
+		if (dataType === "rank") {
+			displaySycmRankData(scrapedData);
+			statusText = `已抓取 <span id="item-count">${scrapedData.list.length}</span> 条数据`;
+		} else if (dataType === "analysis") {
+			displaySycmRankData(scrapedData);
+			statusText = `已抓取 <span id="item-count">${scrapedData.list.length}</span> 条数据`;
+		} else {
+			console.warn("未知的生意参谋数据类型:", dataType);
+			document.getElementById("result").innerHTML = `
+      <div class="error-message">
+        <h3>无法显示数据</h3>
+        <p>未知的生意参谋数据类型: ${dataType}</p>
+      </div>
+    `;
+			statusText = "数据格式不支持";
+		}
+	} else if (currentDomain === "one") {
 		if (dataType === "tableList") {
-			displayTableData(scrapedData);
+			displayMysellerTableData(scrapedData);
 			statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
 		} else {
 			console.warn("未知的万相台数据类型:", dataType);
@@ -896,7 +919,7 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 		}
 	}
 }
-function displayTableData(list) {
+function displayMysellerTableData(list) {
 	const resultContainer = document.getElementById("result");
 	resultContainer.innerHTML = "";
 	if (!list) {
@@ -945,6 +968,56 @@ function displayTableData(list) {
 		resultContainer.appendChild(itemDiv);
 	});
 }
+
+function displaySycmRankData(data) {
+	const resultContainer = document.getElementById("result");
+	resultContainer.innerHTML = "";
+	if (!data.list) {
+		resultContainer.innerHTML = "<p>没有抓取到数据</p>";
+		return;
+	}
+	if (!Array.isArray(data.list)) {
+		console.error("displaySycmRankData: 接收到非数组数据", data.list);
+		if (typeof data.list === "object") {
+			resultContainer.innerHTML = `
+        <div class="error-message">
+          <h3>收到非列表数据</h3>
+          <p>数据类型: ${typeof data.list}</p>
+          <p>数据内容: ${JSON.stringify(data.list).substring(0, 100)}...</p>
+        </div>
+      `;
+		} else {
+			resultContainer.innerHTML = "<p>收到的数据格式错误，不是列表类型</p>";
+		}
+		return;
+	}
+	if (data.list.length === 0) {
+		resultContainer.innerHTML = "<p>没有抓取到数据</p>";
+		return;
+	}
+	const itemCount = document.getElementById("item-count");
+	if (itemCount) {
+		itemCount.textContent = data.list.length;
+	}
+	if (data.keyword) {
+		const itemDiv = document.createElement("h4");
+		resultContainer.appendChild(itemDiv);
+	}
+	data.list.forEach((item) => {
+		const itemDiv = document.createElement("div");
+		itemDiv.className = "item";
+		itemDiv.innerHTML = `
+      <div class="item-details">
+        <div class="item-title">${item.keyword}</div>
+        <div class="item-meta">搜索人气： ${item.searchPopularity}</div>
+        <div class="item-meta">点击率： ${item.clickRate}</div>
+        <div class="item-meta">支付转化率： ${item.payConversionRate}</div>
+      </div>
+    `;
+		resultContainer.appendChild(itemDiv);
+	});
+}
+
 function displayTaobaoSearchData(items) {
 	const resultContainer = document.getElementById("result");
 	resultContainer.innerHTML = "";

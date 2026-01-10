@@ -45,8 +45,8 @@ async function getPageData(tableList) {
 	for (let i = curPageNum == 1 ? 1 : 0; i < pagesNode.length; i++) {
 		chrome.runtime.sendMessage({
 			from: "myseller",
-			action: "updateTipContent",
-			data: `正在读取第 ${i + 1} 页数据……`,
+			action: "updateStatus",
+			status: `正在读取第 ${i + 1} 页数据……`,
 		});
 		pagesNode[i].click();
 		await new Promise((resolve) => {

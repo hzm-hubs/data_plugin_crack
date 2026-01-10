@@ -581,7 +581,7 @@ function extractQuestions(questionsPanel, bestSelector) {
 
 			if (questionContent) {
 				extractedQuestions.push({
-					answerList,
+					// answerList,
 					lastAnswer: answerList.length > 0 ? answerList[0].content : "",
 					content: questionContent,
 				});
