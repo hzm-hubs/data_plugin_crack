@@ -56,11 +56,12 @@ async function scrapePages(relatedList, maxPageNum = 5) {
 	let curPageNum = activePageNode
 		? Number(activePageNode.textContent.trim())
 		: 1;
-
 	console.log("当前选中页码", curPageNum);
-
+	const pageItem = pageSelector.querySelectorAll("li.ant-pagination-item");
+	const tableMaxNum = Array.from(pageItem).pop().textContent;
+	maxPageNum = Math.min(maxPageNum, Number(tableMaxNum) - curPageNum + 1);
 	await getPageData(relatedList);
-
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 	for (let i = 1; i < maxPageNum; i++) {
 		chrome.runtime.sendMessage({
 			from: "sycm",
