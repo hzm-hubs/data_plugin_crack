@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
-	"name": "数聚通分析软件",
-	"version": "1.5.3",
+	"name": "数聚通分析软件_Ding",
+	"version": "1.5.4",
 	"description": "智能化抓取电商与自媒体数据，实时导入钉钉多维表格，驱动精准分析与数据驱动决策，提升业务洞察力与运营效率",
 	"author": "superman",
 	"icons": {
@@ -28,7 +28,8 @@
 		"https://www.xiaohongshu.com/search*",
 		"https://www.xiaohongshu.com/explore*",
 		"https://www.xiaohongshu.com/user/profile/*",
-		"https://one.alimama.com/index.html?*"
+		"https://one.alimama.com/index.html?*",
+		"https://sycm.taobao.com/mc/free/search*"
 	],
 	"content_scripts": [
 		{
@@ -74,6 +75,26 @@
 				"xiaohongshu/search.js",
 				"xiaohongshu/user.js",
 				"xiaohongshu/note.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://sycm.taobao.com/mc/free/search_rank*"],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"sycm/rank.js",
+				"content.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://sycm.taobao.com/mc/free/search_analysis*"],
+			"js": [
+				"common/domainHelper.js",
+				"common/utils.js",
+				"sycm/analysis.js",
 				"content.js"
 			],
 			"run_at": "document_end"

@@ -1,5 +1,7 @@
 console.log("meta.js loaded");
 
+const unLoginFields = ["授权设置", "钉钉设置"];
+
 const fieldsForm = [
 	{
 		groupName: "授权设置",
@@ -65,6 +67,13 @@ const fieldsForm = [
 			{ key: "dySearchListNum", label: "搜索列表数", default: 50 },
 			{ key: "dyCommentNum", label: "最大评论数", default: 100 },
 			{ key: "dyVideoNum", label: "最大用户视频数", default: 100 },
+		],
+	},
+	{
+		groupName: "生意参谋设置",
+		keys: [
+			{ key: "sycmRankNum", label: "搜索关键词页数", default: 5 },
+			{ key: "sycmAnalysisNum", label: "二级搜索页数", default: 5 },
 		],
 	},
 ];

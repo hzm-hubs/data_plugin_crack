@@ -1,39 +1,37 @@
 const mainfest = chrome.runtime.getManifest();
-
 document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	// 配置信息
 	console.log("生成默认设置项");
-	const appInfo = generateAppInfo();
+	const appInfo = generateAppInfo(fieldsForm);
 	console.log("根据历史数据进行赋值");
 	fetchAppInfo();
 	let dataArray = [];
 	dataType = "";
 	domain = "";
-	initFieldsForm(fieldsForm);
 	let isLogin = false; // 是否登录过
+	initFieldsForm(fieldsForm);
 	chrome.storage.local.get("isLogin", function (result) {
 		if (result.isLogin) {
 			isLogin = JSON.parse(result.isLogin) || false;
 		}
 		if (isLogin) {
-			changeDisplay("controls", "remove");
-			changeDisplay("result", "remove");
-			setStatusContent("欢迎使用！");
-			changeDisplay("settingBtnRow");
-			changeDisplay("settingsPanel");
+			welcomeUse();
 			fetchCurrentTabData();
 		}
 	});
 
 	// 初始化表单
-	function initFieldsForm(fieldsForm) {
+	function initFieldsForm(data) {
 		const fatherELe = document.getElementById("dataForm");
 		if (fatherELe) {
-			console.log("生成设置页面表单");
 			const childList = [];
-			fieldsForm.forEach((group) => {
+			data?.forEach((group) => {
 				const groupDiv = document.createElement("div");
-				groupDiv.className = "settings-group";
+				if (!unLoginFields.includes(group.groupName)) {
+					groupDiv.className = "settings-group hide-element";
+				} else {
+					groupDiv.className = "settings-group";
+				}
 				const groupTitle = document.createElement("div");
 				groupTitle.className = "settings-group-title";
 				groupTitle.textContent = group.groupName;
@@ -59,13 +57,22 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		}
 	}
 
-	function generateAppInfo() {
-		return fieldsForm.reduce((acc, group) => {
+	function generateAppInfo(data) {
+		return data.reduce((acc, group) => {
 			group.keys.forEach((field) => {
 				acc[field.key] = field.default;
 			});
 			return acc;
 		}, {});
+	}
+
+	function welcomeUse() {
+		changeDisplay("controls", "remove");
+		changeDisplay("result", "remove");
+		setStatusContent("欢迎使用！");
+		changeDisplay("settingBtnRow");
+		changeDisplay("settingsPanel");
+		changeGroupDisplay(".settings-group.hide-element", "remove");
 	}
 
 	// 设置初始值
@@ -78,10 +85,12 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			if (chrome.runtime.lastError) {
 				console.log("读取 appInfo 失败", chrome.runtime.lastError);
 			} else {
-				for (let i in appInfo) {
-					if (result.appInfo[i] === undefined) continue;
-					appInfo[i] = result.appInfo[i];
-					setInitValue(i, result.appInfo[i]);
+				if (result.appInfo) {
+					for (let i in appInfo) {
+						if (!Object.hasOwn(result.appInfo, i)) continue;
+						appInfo[i] = result.appInfo[i];
+						setInitValue(i, result.appInfo[i]);
+					}
 				}
 			}
 		});
@@ -92,6 +101,16 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			targetEle.classList.add("hide-element");
 		} else {
 			targetEle.classList.remove("hide-element");
+		}
+	}
+	function changeGroupDisplay(exp = "", type = "add") {
+		const targetEle = document.querySelectorAll(exp);
+		if (type == "add") {
+			Array.from(targetEle).forEach((ele) => ele.classList.add("hide-element"));
+		} else {
+			Array.from(targetEle).forEach((ele) =>
+				ele.classList.remove("hide-element")
+			);
 		}
 	}
 	function addListen(targetId, callBack = null, type = "click") {
@@ -131,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			setInitValue(key, appInfo[key]);
 			return;
 		}
-		const tempValue = !value ?? isNaN(value) ? value : Number(value);
+		const tempValue = !value || isNaN(value) ? value : Number(value);
 		appInfo[key] = tempValue;
 		chrome.storage.local.set({
 			appInfo,
@@ -141,72 +160,85 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	Object.keys(appInfo).map((it) =>
 		addListen(it, (e) => handleChange(it, e), "change")
 	);
+
 	function saveSettings() {
 		const cozeToken = document.getElementById("cozeToken").value.trim();
 		if (!cozeToken) {
 			setStatusContent("请填写授权码");
 			return;
 		}
+		// 判断飞书
 		// const appId = document.getElementById("appId").value.trim();
 		// const feishuLink = document.getElementById("feishuLink").value.trim();
+		// const noneFeisu = !appId || !feishuLink;
+		// 判断dingding
 		const appKey = document.getElementById("appKey").value.trim();
 		const dingdingLink = document.getElementById("dingdingLink").value.trim();
+		const noneDingDing = !appKey || !dingdingLink;
 
-		if (!appKey && !dingdingLink) {
+		if (noneDingDing) {
 			setStatusContent("请填写钉钉设置");
 			return;
 		}
-		changeDisplay("controls", "remove");
-		changeDisplay("result", "remove");
-		setStatusContent("欢迎使用！");
-		changeDisplay("settingBtnRow");
-		changeDisplay("settingsPanel");
+		welcomeUse();
 		isLogin = true;
 		chrome.storage.local.set({
 			isLogin,
 		});
 	}
+
 	document.getElementById("settingsBtn").addEventListener("click", function () {
+		handleSettingSwitch();
+	});
+
+	function handleSettingSwitch(type = "") {
 		const triggerEle = document.getElementById("settingsBtn");
 		const targetEle = document.getElementById("settingsPanel");
-		if (targetEle.classList.contains("hide-element")) {
-			targetEle.classList.remove("hide-element");
-			triggerEle.innerText = "收起设置";
+		// 主动控制
+		if (type) {
+			if (type == "open") {
+				targetEle.classList.remove("hide-element");
+				triggerEle.innerText = "收起设置";
+			} else if (type == "close") {
+				targetEle.classList.add("hide-element");
+				triggerEle.innerText = "打开设置";
+			}
 		} else {
-			targetEle.classList.add("hide-element");
-			triggerEle.innerText = "打开设置";
+			// 按钮自动切换
+			if (targetEle.classList.contains("hide-element")) {
+				targetEle.classList.remove("hide-element");
+				triggerEle.innerText = "收起设置";
+			} else {
+				targetEle.classList.add("hide-element");
+				triggerEle.innerText = "打开设置";
+			}
 		}
-	});
+	}
+
 	document
 		.getElementById("saveSettingsBtn")
 		.addEventListener("click", function () {
 			saveSettings();
 		});
+
 	function setPageTitle(domain) {
+		console.log("setPageTitle:", domain);
 		const pageTitle = document.getElementById("pageTitle");
 		if (domain === "myseller") {
 			pageTitle.innerText = "千牛数据抓取";
-			document.getElementById("exportBtn").style.display = "inline-block";
-			document.getElementById("exportJsonBtn").style.display = "inline-block";
 		} else if (domain == "one") {
 			pageTitle.innerText = "万相台数据抓取";
-			changeDisplay("exportBtn");
 			changeDisplay("exportExcel", "remove");
+		} else if (domain === "sycm") {
+			pageTitle.innerText = "生意参谋数据抓取";
 		} else if (domain === "taobao" || domain === "tmall") {
 			pageTitle.innerText = "淘宝数据抓取";
-			document.getElementById("exportBtn").style.display = "inline-block";
-			document.getElementById("exportJsonBtn").style.display = "inline-block";
 		} else {
 			if (domain === "douyin") {
 				pageTitle.innerText = "抖音数据抓取";
-				document.getElementById("exportBtn").style.display = "inline-block";
-				document.getElementById("exportJsonBtn").style.display = "inline-block";
 			} else {
 				if (domain === "xiaohongshu") {
 					pageTitle.innerText = "小红书数据抓取";
-					document.getElementById("exportBtn").style.display = "inline-block";
-					document.getElementById("exportJsonBtn").style.display =
-						"inline-block";
 				} else {
 					pageTitle.innerText = "数聚通分析软件";
 				}
@@ -222,10 +254,12 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			function (tabs) {
 				const tabUrl = tabs[0].url;
 				domain = "other";
-				if (tabUrl.includes("myseller.taobao.com")) {
-					domain = "myseller";
-				} else if (tabUrl.includes("one.alimama.com")) {
+				if (tabUrl.includes("one.alimama.com")) {
 					domain = "one";
+				} else if (tabUrl.includes("sycm.taobao.com")) {
+					domain = "sycm";
+				} else if (tabUrl.includes("myseller.taobao.com")) {
+					domain = "myseller";
 				} else if (tabUrl.includes("taobao.com")) {
 					domain = "taobao";
 				} else {
@@ -463,54 +497,56 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 				alert("没有可导出的数据");
 			}
 		});
-	document.getElementById("exportBtn").addEventListener("click", function () {
-		if (dataArray) {
-			chrome.tabs.query(
-				{
-					active: true,
-					currentWindow: true,
-				},
-				function (tabs, fetchTime) {
-					const tabUrl = tabs[0].url;
-					let domainName = domain;
-					const storageKey = "data_" + btoa(tabUrl);
-					chrome.storage.local.get([storageKey], function (result) {
-						if (!appInfo.cozeToken) {
-							setStatusContent("请填写授权码");
-							changeDisplay("settingsPanel", "remove");
-							return;
-						}
-						if (!appInfo.appId) {
-							alert("请先在设置中配置飞书appId");
-							changeDisplay("settingsPanel", "remove");
-							return;
-						}
-						if (!appInfo.feishuLink) {
-							alert("请先在设置中配置飞书多维表格URL");
-							changeDisplay("settingsPanel", "remove");
-							return;
-						}
-						if (result[storageKey] && result[storageKey].fetchTime) {
-							fetchTime = result[storageKey].fetchTime;
-						} else {
-							fetchTime = new Date().toLocaleString();
-						}
-						let exportData = {
-							domain: domainName,
-							type: dataType,
-							data: dataArray,
-							fetchTime: fetchTime,
-							url: tabUrl,
-						};
-						setStatusContent("正在导出数据到多维表格...");
-						uploadData(exportData);
-					});
-				}
-			);
-		} else {
-			alert("没有可导出的数据");
-		}
-	});
+
+	// 暂时隐藏
+	// document.getElementById("exportBtn").addEventListener("click", function () {
+	// 	if (dataArray) {
+	// 		chrome.tabs.query(
+	// 			{
+	// 				active: true,
+	// 				currentWindow: true,
+	// 			},
+	// 			function (tabs, fetchTime) {
+	// 				const tabUrl = tabs[0].url;
+	// 				let domainName = domain;
+	// 				const storageKey = "data_" + btoa(tabUrl);
+	// 				chrome.storage.local.get([storageKey], function (result) {
+	// 					if (!appInfo.cozeToken) {
+	// 						setStatusContent("请填写授权码");
+	// 						handleSettingSwitch("open");
+	// 						return;
+	// 					}
+	// 					if (!appInfo.appId) {
+	// 						alert("请先在设置中配置飞书appId");
+	// 						handleSettingSwitch("open");
+	// 						return;
+	// 					}
+	// 					if (!appInfo.feishuLink) {
+	// 						alert("请先在设置中配置飞书多维表格URL");
+	// 						handleSettingSwitch("open");
+	// 						return;
+	// 					}
+	// 					if (result[storageKey] && result[storageKey].fetchTime) {
+	// 						fetchTime = result[storageKey].fetchTime;
+	// 					} else {
+	// 						fetchTime = new Date().toLocaleString();
+	// 					}
+	// 					let exportData = {
+	// 						domain: domainName,
+	// 						type: dataType,
+	// 						data: dataArray,
+	// 						fetchTime: fetchTime,
+	// 						url: tabUrl,
+	// 					};
+	// 					setStatusContent("正在导出数据到多维表格...");
+	// 					uploadData(exportData);
+	// 				});
+	// 			}
+	// 		);
+	// 	} else {
+	// 		alert("没有可导出的数据");
+	// 	}
+	// });
 
 	document
 		.getElementById("exportBtnDing")
@@ -528,17 +564,17 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 						chrome.storage.local.get([storageKey], function (result) {
 							if (!appInfo.cozeToken) {
 								setStatusContent("请填写授权码");
-								changeDisplay("settingsPanel", "remove");
+								handleSettingSwitch("open");
 								return;
 							}
 							if (!appInfo.appKey) {
 								alert("请先在设置中配置钉钉appKey");
-								changeDisplay("settingsPanel", "remove");
+								handleSettingSwitch("open");
 								return;
 							}
 							if (!appInfo.dingdingLink) {
 								alert("请先在设置中配置钉钉AI表格URL");
-								changeDisplay("settingsPanel", "remove");
+								handleSettingSwitch("open");
 								return;
 							}
 							if (result[storageKey] && result[storageKey].fetchTime) {
@@ -563,7 +599,13 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			}
 		});
 
+	let isLoading = false;
 	function uploadData(exportData, channel = "feishu") {
+		if (isLoading) {
+			alert("正在上传中，请稍后再试");
+			return;
+		}
+		isLoading = true;
 		const workflowPayload = {
 			parameters: {
 				input: {
@@ -572,6 +614,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 					documentLink:
 						channel == "feishu" ? appInfo.feishuLink : appInfo.dingdingLink,
 					version: mainfest.version,
+					channel,
 				},
 			},
 			workflow_id: "7505701175690477579",
@@ -603,6 +646,9 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			.catch((error) => {
 				console.error("调用工作流API失败:", error);
 				setStatusContent("导出失败，请检查网络连接");
+			})
+			.finally(() => {
+				isLoading = false;
 			});
 	}
 
@@ -755,10 +801,11 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		}
 	});
 });
+
 function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 	if (currentDomain === "myseller") {
 		if (dataType === "tableList") {
-			displayTableData(scrapedData);
+			displayMysellerTableData(scrapedData);
 			statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
 		} else {
 			console.warn("未知的千牛数据类型:", dataType);
@@ -771,9 +818,26 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 			statusText = "数据格式不支持";
 		}
 	}
-	if (currentDomain === "one") {
+	if (currentDomain === "sycm") {
+		if (dataType === "rank") {
+			displaySycmRankData(scrapedData);
+			statusText = `已抓取 <span id="item-count">${scrapedData.list.length}</span> 条数据`;
+		} else if (dataType === "analysis") {
+			displaySycmRankData(scrapedData);
+			statusText = `已抓取 <span id="item-count">${scrapedData.list.length}</span> 条数据`;
+		} else {
+			console.warn("未知的生意参谋数据类型:", dataType);
+			document.getElementById("result").innerHTML = `
+      <div class="error-message">
+        <h3>无法显示数据</h3>
+        <p>未知的生意参谋数据类型: ${dataType}</p>
+      </div>
+    `;
+			statusText = "数据格式不支持";
+		}
+	} else if (currentDomain === "one") {
 		if (dataType === "tableList") {
-			displayTableData(scrapedData);
+			displayMysellerTableData(scrapedData);
 			statusText = `已抓取 <span id="item-count">${scrapedData.length}</span> 个商品`;
 		} else {
 			console.warn("未知的万相台数据类型:", dataType);
@@ -896,7 +960,8 @@ function displayDataByDomainAndType(currentDomain, dataType, scrapedData) {
 		}
 	}
 }
-function displayTableData(list) {
+
+function displayMysellerTableData(list) {
 	const resultContainer = document.getElementById("result");
 	resultContainer.innerHTML = "";
 	if (!list) {
@@ -945,6 +1010,56 @@ function displayTableData(list) {
 		resultContainer.appendChild(itemDiv);
 	});
 }
+
+function displaySycmRankData(data) {
+	const resultContainer = document.getElementById("result");
+	resultContainer.innerHTML = "";
+	if (!data.list) {
+		resultContainer.innerHTML = "<p>没有抓取到数据</p>";
+		return;
+	}
+	if (!Array.isArray(data.list)) {
+		console.error("displaySycmRankData: 接收到非数组数据", data.list);
+		if (typeof data.list === "object") {
+			resultContainer.innerHTML = `
+        <div class="error-message">
+          <h3>收到非列表数据</h3>
+          <p>数据类型: ${typeof data.list}</p>
+          <p>数据内容: ${JSON.stringify(data.list).substring(0, 100)}...</p>
+        </div>
+      `;
+		} else {
+			resultContainer.innerHTML = "<p>收到的数据格式错误，不是列表类型</p>";
+		}
+		return;
+	}
+	if (data.list.length === 0) {
+		resultContainer.innerHTML = "<p>没有抓取到数据</p>";
+		return;
+	}
+	const itemCount = document.getElementById("item-count");
+	if (itemCount) {
+		itemCount.textContent = data.list.length;
+	}
+	if (data.keyword) {
+		const itemDiv = document.createElement("h4");
+		resultContainer.appendChild(itemDiv);
+	}
+	data.list.forEach((item) => {
+		const itemDiv = document.createElement("div");
+		itemDiv.className = "item";
+		itemDiv.innerHTML = `
+      <div class="item-details">
+        <div class="item-title">${item.keyword}</div>
+        <div class="item-meta">搜索人气： ${item.searchPopularity}</div>
+        <div class="item-meta">点击率： ${item.clickRate}</div>
+        <div class="item-meta">支付转化率： ${item.payConversionRate}</div>
+      </div>
+    `;
+		resultContainer.appendChild(itemDiv);
+	});
+}
+
 function displayTaobaoSearchData(items) {
 	const resultContainer = document.getElementById("result");
 	resultContainer.innerHTML = "";

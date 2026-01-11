@@ -2,6 +2,8 @@ function getDomain() {
 	const currentUrl = window.location.href;
 	if (currentUrl.includes("one.alimama.com")) {
 		return "one";
+	} else if (currentUrl.includes("sycm.taobao.com")) {
+		return "sycm";
 	} else if (currentUrl.includes("myseller.taobao.com")) {
 		return "myseller";
 	} else if (currentUrl.includes("taobao.com")) {
