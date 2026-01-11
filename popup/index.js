@@ -15,12 +15,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			isLogin = JSON.parse(result.isLogin) || false;
 		}
 		if (isLogin) {
-			changeDisplay("controls", "remove");
-			changeDisplay("result", "remove");
-			setStatusContent("欢迎使用！");
-			changeDisplay("settingBtnRow");
-			changeDisplay("settingsPanel");
-			changeGroupDisplay(".settings-group.hide-element", "remove");
+			welcomeUse();
 			fetchCurrentTabData();
 		}
 	});
@@ -69,6 +64,15 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			});
 			return acc;
 		}, {});
+	}
+
+	function welcomeUse() {
+		changeDisplay("controls", "remove");
+		changeDisplay("result", "remove");
+		setStatusContent("欢迎使用！");
+		changeDisplay("settingBtnRow");
+		changeDisplay("settingsPanel");
+		changeGroupDisplay(".settings-group.hide-element", "remove");
 	}
 
 	// 设置初始值
@@ -176,12 +180,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 			setStatusContent("请填写飞书、钉钉设置");
 			return;
 		}
-		changeDisplay("controls", "remove");
-		changeDisplay("result", "remove");
-		setStatusContent("欢迎使用！");
-		changeDisplay("settingBtnRow");
-		changeDisplay("settingsPanel");
-		changeGroupDisplay(".settings-group.hide-element", "remove");
+		welcomeUse();
 		isLogin = true;
 		chrome.storage.local.set({
 			isLogin,
@@ -189,16 +188,32 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 	}
 
 	document.getElementById("settingsBtn").addEventListener("click", function () {
+		handleSettingSwitch();
+	});
+
+	function handleSettingSwitch(type = "") {
 		const triggerEle = document.getElementById("settingsBtn");
 		const targetEle = document.getElementById("settingsPanel");
-		if (targetEle.classList.contains("hide-element")) {
-			targetEle.classList.remove("hide-element");
-			triggerEle.innerText = "收起设置";
+		// 主动控制
+		if (type) {
+			if (type == "open") {
+				targetEle.classList.remove("hide-element");
+				triggerEle.innerText = "收起设置";
+			} else if (type == "close") {
+				targetEle.classList.add("hide-element");
+				triggerEle.innerText = "打开设置";
+			}
 		} else {
-			targetEle.classList.add("hide-element");
-			triggerEle.innerText = "打开设置";
+			// 按钮自动切换
+			if (targetEle.classList.contains("hide-element")) {
+				targetEle.classList.remove("hide-element");
+				triggerEle.innerText = "收起设置";
+			} else {
+				targetEle.classList.add("hide-element");
+				triggerEle.innerText = "打开设置";
+			}
 		}
-	});
+	}
 
 	document
 		.getElementById("saveSettingsBtn")
@@ -211,31 +226,20 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 		const pageTitle = document.getElementById("pageTitle");
 		if (domain === "myseller") {
 			pageTitle.innerText = "千牛数据抓取";
-			document.getElementById("exportBtn").style.display = "inline-block";
-			document.getElementById("exportJsonBtn").style.display = "inline-block";
 		} else if (domain == "one") {
 			pageTitle.innerText = "万相台数据抓取";
 			changeDisplay("exportBtn");
 			changeDisplay("exportExcel", "remove");
 		} else if (domain === "sycm") {
 			pageTitle.innerText = "生意参谋数据抓取";
-			document.getElementById("exportBtn").style.display = "inline-block";
-			document.getElementById("exportJsonBtn").style.display = "inline-block";
 		} else if (domain === "taobao" || domain === "tmall") {
 			pageTitle.innerText = "淘宝数据抓取";
-			document.getElementById("exportBtn").style.display = "inline-block";
-			document.getElementById("exportJsonBtn").style.display = "inline-block";
 		} else {
 			if (domain === "douyin") {
 				pageTitle.innerText = "抖音数据抓取";
-				document.getElementById("exportBtn").style.display = "inline-block";
-				document.getElementById("exportJsonBtn").style.display = "inline-block";
 			} else {
 				if (domain === "xiaohongshu") {
 					pageTitle.innerText = "小红书数据抓取";
-					document.getElementById("exportBtn").style.display = "inline-block";
-					document.getElementById("exportJsonBtn").style.display =
-						"inline-block";
 				} else {
 					pageTitle.innerText = "数聚通分析软件";
 				}
@@ -508,17 +512,17 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 					chrome.storage.local.get([storageKey], function (result) {
 						if (!appInfo.cozeToken) {
 							setStatusContent("请填写授权码");
-							changeDisplay("settingsPanel", "remove");
+							handleSettingSwitch("open");
 							return;
 						}
 						if (!appInfo.appId) {
 							alert("请先在设置中配置飞书appId");
-							changeDisplay("settingsPanel", "remove");
+							handleSettingSwitch("open");
 							return;
 						}
 						if (!appInfo.feishuLink) {
 							alert("请先在设置中配置飞书多维表格URL");
-							changeDisplay("settingsPanel", "remove");
+							handleSettingSwitch("open");
 							return;
 						}
 						if (result[storageKey] && result[storageKey].fetchTime) {
@@ -559,17 +563,17 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 						chrome.storage.local.get([storageKey], function (result) {
 							if (!appInfo.cozeToken) {
 								setStatusContent("请填写授权码");
-								changeDisplay("settingsPanel", "remove");
+								handleSettingSwitch("open");
 								return;
 							}
 							if (!appInfo.appKey) {
 								alert("请先在设置中配置钉钉appKey");
-								changeDisplay("settingsPanel", "remove");
+								handleSettingSwitch("open");
 								return;
 							}
 							if (!appInfo.dingdingLink) {
 								alert("请先在设置中配置钉钉AI表格URL");
-								changeDisplay("settingsPanel", "remove");
+								handleSettingSwitch("open");
 								return;
 							}
 							if (result[storageKey] && result[storageKey].fetchTime) {
@@ -609,6 +613,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 					documentLink:
 						channel == "feishu" ? appInfo.feishuLink : appInfo.dingdingLink,
 					version: mainfest.version,
+					channel,
 				},
 			},
 			workflow_id: "7505701175690477579",
