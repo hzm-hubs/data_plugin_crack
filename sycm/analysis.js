@@ -1,9 +1,9 @@
 async function scrapeSearchAnalysis() {
 	console.log("开始扫描二级关键词");
-	const keyword = document
+	const category = document
 		.querySelector(".op-market-search-analysis-keyword span")
 		.textContent.trim();
-	console.log("当前关键词:", keyword);
+	console.log("当前搜索词:", category);
 	await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for page to load
 	waitForElement(".oui-date-picker-particle-button");
 	const dateContainer = document.querySelector(
@@ -25,7 +25,7 @@ async function scrapeSearchAnalysis() {
 	await scrapePages(relatedList);
 	console.log("关键词数据抓取完成");
 	return {
-		keyword,
+		category,
 		list: relatedList,
 	};
 }

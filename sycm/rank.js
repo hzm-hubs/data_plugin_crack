@@ -1,6 +1,15 @@
 async function scrapeSearchRank() {
 	// Example logic to scrape search rank data
 	console.log("开始扫描一级关键词");
+	let category = "";
+	const categoryNode = document.querySelector(".short-name");
+	if (categoryNode.parentNode) {
+		category = categoryNode.parentNode.getAttribute("title").trim();
+	}
+	if (!category) {
+		category = categoryNode.textContent.trim();
+	}
+	console.log("当前分类:", category);
 	await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for page to load
 	waitForElement(".oui-date-picker-particle-button");
 	const dateContainer = document.querySelector(
@@ -22,6 +31,7 @@ async function scrapeSearchRank() {
 	await scrapePages(keywordList);
 	console.log("关键词数据抓取完成");
 	return {
+		category,
 		list: keywordList,
 	};
 }
