@@ -617,7 +617,7 @@ document.addEventListener("DOMContentLoaded", function (dataType, domain) {
 					channel,
 				},
 			},
-			workflow_id: "7505701175690477579",
+			workflow_id: "7594477533074276362",
 		};
 		fetch("https://api.coze.cn/v1/workflow/run", {
 			method: "POST",
