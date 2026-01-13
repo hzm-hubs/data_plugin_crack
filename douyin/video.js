@@ -1030,20 +1030,20 @@ async function scrapeVideoComments(_0x30bed4 = 100, _0x3f8a55 = false) {
 			try {
 				_0x2aeb8e++;
 				// todo comment-item selector
-				const _0x21b323 = _0x2eeaeb.querySelector(".Vrj4Q3zT .jzhUi9rG");
+				const _0x21b323 = _0x2eeaeb.querySelector(".comment-item-info-wrap");
 				const itemUserName = _0x21b323 ? _0x21b323.textContent.trim() : "";
-				const _0x56366e = _0x2eeaeb.querySelector(".C7LroK_h");
+				const _0x56366e = _0x2eeaeb.querySelector(".LvAtyU_f");
 				let itemContent = _0x56366e ? _0x56366e.textContent.trim() : "";
-				const _0x46d565 = _0x2eeaeb.querySelector(".fJhvAqos");
-				const _0x398ac6 = _0x46d565 ? _0x46d565.textContent.trim() : "";
+				const _0x46d565 = _0x2eeaeb.querySelector(".GOkWHE6S");
+				const ipInfo = _0x46d565 ? _0x46d565.textContent.trim() : "";
 				let itemDate = "";
 				let itemLocation = "";
-				if (_0x398ac6) {
-					const _0x24aa52 = _0x398ac6.split("·");
+				if (ipInfo) {
+					const _0x24aa52 = ipInfo.split("·");
 					itemDate = _0x24aa52[0] ? _0x24aa52[0].trim() : "";
 					itemLocation = _0x24aa52[1] ? _0x24aa52[1].trim() : "";
 				}
-				const _0x577294 = _0x2eeaeb.querySelector(".xZhLomAs span");
+				const _0x577294 = _0x2eeaeb.querySelector(".wiQmZrKV span");
 				const itemLIkes = _0x577294 ? _0x577294.textContent.trim() : "";
 				const _0x5e24a5 =
 					itemUserName + "-" + itemContent.substring(0, 50) + "-" + _0x2aeb8e;
