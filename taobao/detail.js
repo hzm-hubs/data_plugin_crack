@@ -368,11 +368,11 @@ async function scrapeTaobaoDetailData(
 	const skuFunction = await scrapeComments();
 	console.log("评论数据抓取完成", skuFunction);
 	closeCommentOverlay();
-	console.log("开始抓取问大家数据...");
-	await new Promise((r) => setTimeout(r, 2000));
-	const questions = await scrapeQuestions();
-	closeQuestionOverlay();
-	console.log("问大家数据抓取完成", questions);
+	// console.log("开始抓取问大家数据...");
+	// await new Promise((r) => setTimeout(r, 2000));
+	// const questions = await scrapeQuestions();
+	// closeQuestionOverlay();
+	// console.log("问大家数据抓取完成", questions);
 	const scrapeFunction = {
 		title: productTitle,
 		price: {
@@ -400,7 +400,7 @@ async function scrapeTaobaoDetailData(
 		},
 		skuOptions: skuData,
 		comments: skuFunction,
-		questions,
+		// questions,
 	};
 	console.log("详情数据抓取完成");
 	return scrapeFunction;
